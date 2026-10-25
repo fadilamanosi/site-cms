@@ -27,11 +27,15 @@ function onClick(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     const target = event.currentTarget as HTMLElement | null;
+    const img = target?.querySelector('img');
     editorUi.setActive({
         fieldKey: props.fieldKey,
         kind: props.kind,
         label: props.label || props.fieldKey,
-        defaultValue: props.defaultValue || (props.kind === 'text' ? target?.innerText?.trim() : undefined),
+        defaultValue:
+            props.defaultValue ||
+            (props.kind === 'text' ? target?.innerText?.trim() : undefined) ||
+            (props.kind === 'image' ? img?.getAttribute('src') ?? undefined : undefined),
     });
 }
 </script>

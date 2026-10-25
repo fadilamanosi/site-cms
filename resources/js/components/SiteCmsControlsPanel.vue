@@ -42,8 +42,9 @@ watch(
             inputLabel.value = button.label ?? '';
             inputHref.value = button.href ?? '';
         } else {
-            inputText.value = raw != null ? String(raw) : '';
-            inputImage.value = inputText.value;
+            const asText = raw != null && typeof raw !== 'function' ? String(raw) : '';
+            inputText.value = asText;
+            inputImage.value = asText;
             inputLabel.value = '';
             inputHref.value = '';
         }

@@ -1,4 +1,4 @@
-import { computed, unref, type MaybeRef } from 'vue';
+import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useSiteCms } from './useSiteCms';
 import type { SiteCmsKind } from '../types';
 
@@ -14,16 +14,16 @@ function unwrap(entry: unknown): unknown {
 }
 
 export function useSiteField(
-    fieldKey: MaybeRef<string | undefined>,
+    fieldKey: MaybeRefOrGetter<string | undefined>,
     kind: SiteCmsKind,
-    fallback: MaybeRef<unknown>,
+    fallback: MaybeRefOrGetter<unknown>,
 ) {
     const { siteCms } = useSiteCms();
 
     const resolved = computed(() => {
-        const key = unref(fieldKey);
+        const key = toValue(fieldKey);
         if (!key) {
-            return unref(fallback);
+            return toValue(fallback);
         }
         const entry = siteCms.value.values[key];
         if (!entry || entry.kind !== kind) {
@@ -31,16 +31,16 @@ export function useSiteField(
             if (raw !== undefined && raw !== null && raw !== '') {
                 return raw;
             }
-            return unref(fallback);
+            return toValue(fallback);
         }
         const raw = unwrap(entry);
         if (raw === undefined || raw === null || raw === '') {
-            return unref(fallback);
+            return toValue(fallback);
         }
         return raw;
     });
 
-    const editable = computed(() => Boolean(unref(fieldKey)) && siteCms.value.enabled);
+    const editable = computed(() => Boolean(toValue(fieldKey)) && siteCms.value.enabled);
 
     return { resolved, editable, siteCms };
 }
