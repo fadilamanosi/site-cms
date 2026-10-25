@@ -273,6 +273,40 @@
     border-color: var(--gold, hsl(var(--primary, 38 55% 48%)));
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold, currentColor) 22%, transparent);
 }
+.scms-password {
+    position: relative;
+}
+.scms-password input {
+    padding-right: 2.6rem;
+}
+.scms-password-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    cursor: pointer;
+}
+.scms-password-toggle:hover,
+.scms-password-toggle:focus-visible {
+    color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+}
+.scms-password-toggle:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--gold, currentColor) 50%, transparent);
+    outline-offset: -4px;
+    border-radius: var(--radius, 0.6rem);
+}
+.scms-password-toggle svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    display: block;
+}
 .scms-muted {
     color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
     font-size: 0.8125rem;
@@ -302,6 +336,33 @@
 .scms-error {
     color: hsl(var(--destructive, 2 65% 48%));
     font-size: 0.8rem;
+}
+.scms-status {
+    margin: 0 0 0.85rem;
+    color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    font-size: 0.85rem;
+}
+.scms-login .scms-muted {
+    margin: 0 0 1rem;
+    line-height: 1.45;
+}
+.scms-login-nav {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 0.85rem;
+    font-size: 0.8125rem;
+}
+.scms-card > .scms-login-nav:last-child {
+    justify-content: flex-start;
+    margin: 0.85rem 0 0;
+}
+.scms-text-link {
+    color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    text-decoration: none;
+}
+.scms-text-link:hover {
+    color: var(--gold-soft, var(--gold, hsl(var(--primary, 38 55% 55%))));
+    text-decoration: underline;
 }
 .scms-preview {
     width: 100%;

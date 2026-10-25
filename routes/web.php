@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use SiteCms\Http\Controllers\ContentController;
 use SiteCms\Http\Controllers\EditorController;
 use SiteCms\Http\Controllers\LoginController;
+use SiteCms\Http\Controllers\PasswordResetController;
 use SiteCms\Http\Controllers\ResourceController;
 use SiteCms\Http\Middleware\AuthenticateSiteCms;
 use SiteCms\Http\Middleware\RedirectIfSiteCmsAuthenticated;
@@ -21,6 +22,10 @@ Route::middleware('web')->group(function () use ($desk, $login, $path): void {
             Route::middleware(RedirectIfSiteCmsAuthenticated::class)->group(function () use ($login): void {
                 Route::get($login, [LoginController::class, 'create'])->name('site-cms.login');
                 Route::post($login, [LoginController::class, 'store'])->name('site-cms.login.store');
+                Route::get($login.'/forgot-password', [PasswordResetController::class, 'create'])->name('site-cms.password.request');
+                Route::post($login.'/forgot-password', [PasswordResetController::class, 'store'])->name('site-cms.password.email');
+                Route::get($login.'/reset-password/{token}', [PasswordResetController::class, 'edit'])->name('site-cms.password.reset');
+                Route::post($login.'/reset-password', [PasswordResetController::class, 'update'])->name('site-cms.password.update');
             });
         }
 

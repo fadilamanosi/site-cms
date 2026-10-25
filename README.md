@@ -39,7 +39,7 @@ Public pages render **published** values on the server. Drafts never leak to gue
 `SITE_CMS_UI=auto` (default):
 
 - If the host already has a working authed dashboard, CMS mounts as `{admin}/site` under that desk. No CMS login.
-- Otherwise the package ships `/staff/login` and `/staff/site`.
+- Otherwise the package ships `/staff/login` and `/staff/site`. Forgot / reset password on that login uses the host `MAIL_*` mailer (`Mail::to`, default mailer) and the host password-reset broker (`password_reset_tokens`). There is no package mailer.
 
 A desk counts as working only if the guard exists, its user model exists, the prefix has `auth:{guard}` routes, and a guest login GET exists. Config is a hint, then `staff` → `admin` → `console`. A dead hint never embeds.
 

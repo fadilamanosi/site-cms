@@ -6,6 +6,7 @@
     max-width: 100%;
     vertical-align: top;
     cursor: default;
+    pointer-events: auto;
     outline: 1px dashed color-mix(in srgb, currentColor 45%, transparent);
     outline-offset: 2px;
     border-radius: 2px;
@@ -18,17 +19,42 @@
     display: block;
     width: 100%;
 }
+.scms-shell.scms-shell--image {
+    display: inline-block;
+    max-width: 100%;
+}
+.scms-shell.scms-shell--fill.scms-shell--on {
+    display: contents;
+    outline: none;
+}
+.scms-shell.scms-shell--fill.scms-shell--on > :not(.scms-pencil) {
+    pointer-events: auto;
+    outline: 1px dashed color-mix(in srgb, currentColor 45%, transparent);
+    outline-offset: 2px;
+}
+.scms-shell.scms-shell--fill.scms-shell--on > :not(.scms-pencil):hover,
+.scms-shell.scms-shell--fill.scms-shell--active > :not(.scms-pencil) {
+    outline-color: var(--gold, currentColor);
+}
+.scms-shell.scms-shell--fill.scms-shell--active > :not(.scms-pencil) {
+    outline-width: 2px;
+    outline-style: solid;
+}
 .scms-shell.scms-shell--active,
 .scms-shell.scms-shell--open {
     outline: 2px solid var(--gold, currentColor);
     outline-offset: 2px;
     z-index: 60;
 }
-.scms-pencil {
+.scms-pencil-host {
+    position: relative;
+}
+button.scms-pencil {
     position: absolute;
-    top: -0.55rem;
-    right: -0.55rem;
-    z-index: 4;
+    top: -0.45rem;
+    right: -0.45rem;
+    z-index: 40;
+    pointer-events: auto;
     display: grid;
     place-items: center;
     width: 1.65rem;
@@ -37,7 +63,7 @@
     border: 0;
     border-radius: 999px;
     background: var(--gold, hsl(var(--primary, 38 55% 48%)));
-    color: var(--bg, hsl(var(--primary-foreground, 0 0% 10%)));
+    color: var(--bg, hsl(0 0% 10%));
     box-shadow: 0 4px 12px color-mix(in srgb, #000 28%, transparent);
     cursor: pointer;
     opacity: 0.72;
@@ -49,19 +75,30 @@
         box-shadow var(--scms-fast) var(--scms-ease),
         filter var(--scms-fast) var(--scms-ease);
 }
-.scms-pencil svg {
+.scms-shell--image .scms-pencil,
+.scms-shell--block .scms-pencil,
+.scms-pencil--in {
+    top: 0.5rem;
+    right: 0.5rem;
+}
+button.scms-pencil.scms-pencil svg {
     width: 0.85rem;
     height: 0.85rem;
     display: block;
+    color: inherit;
+    transform: none;
+    stroke: currentColor;
 }
 .scms-shell--on:hover .scms-pencil,
 .scms-shell--active .scms-pencil,
-.scms-shell--open .scms-pencil {
+.scms-shell--open .scms-pencil,
+.scms-pencil-host:hover .scms-pencil,
+.scms-shell--fill.scms-shell--on > :not(.scms-pencil):hover .scms-pencil {
     opacity: 1;
     transform: scale(1);
 }
-.scms-pencil:hover,
-.scms-pencil:focus-visible {
+button.scms-pencil:hover,
+button.scms-pencil:focus-visible {
     opacity: 1;
     transform: scale(1.1);
     filter: brightness(1.08);

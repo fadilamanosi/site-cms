@@ -43,6 +43,8 @@ export type SiteCmsShared = {
     routes: {
         login: string;
         logout: string | null;
+        forgotPassword: string | null;
+        resetPassword: string | null;
         dashboard: string;
         draft: string;
         publish: string;

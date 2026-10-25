@@ -55,8 +55,10 @@ export function asImage(raw: unknown, fallbackSrc = '', fallbackAlt = ''): Image
     if (raw && typeof raw === 'object') {
         const record = raw as { src?: unknown; value?: unknown; alt?: unknown };
 
+        const src = String(record.src ?? record.value ?? fallbackSrc);
+
         return {
-            src: String(record.src ?? record.value ?? fallbackSrc),
+            src: src !== '' ? src : fallbackSrc,
             alt: String(record.alt ?? fallbackAlt),
         };
     }

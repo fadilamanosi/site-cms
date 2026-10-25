@@ -3,6 +3,7 @@
 namespace SiteCms\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use SiteCms\Support\DeskResolver;
 use SiteCms\Support\GuardResolver;
 use SiteCms\Support\PageMatcher;
@@ -52,6 +53,12 @@ class ShareService
             'routes' => [
                 'login' => $this->href($loginPath),
                 'logout' => $embedded ? null : $this->href($loginPath.'/logout'),
+                'forgotPassword' => Route::has('site-cms.password.request')
+                    ? $this->href($loginPath.'/forgot-password')
+                    : null,
+                'resetPassword' => Route::has('site-cms.password.update')
+                    ? $this->href($loginPath.'/reset-password')
+                    : null,
                 'dashboard' => $this->href($cmsPath),
                 'draft' => $this->href($cmsPath.'/draft'),
                 'publish' => $this->href($cmsPath.'/publish'),
