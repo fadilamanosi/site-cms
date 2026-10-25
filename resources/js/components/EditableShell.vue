@@ -8,15 +8,12 @@ import { isSiteCmsMessage, postToParent, SITE_CMS_SOURCE } from '../previewBridg
 import type { ActiveField, SiteCmsKind } from '../types';
 import '../../css/site-cms-preview.css';
 
-const props = withDefaults(
-    defineProps<{
-        fieldKey: string;
-        kind: SiteCmsKind;
-        label?: string;
-        defaultValue?: unknown;
-    }>(),
-    { label: '', defaultValue: '' },
-);
+const props = defineProps<{
+    fieldKey: string;
+    kind: SiteCmsKind;
+    label?: string;
+    defaultValue?: unknown;
+}>();
 
 const { siteCms } = useSiteCms();
 const { resolved } = useSiteField(() => props.fieldKey, props.kind, () => props.defaultValue);

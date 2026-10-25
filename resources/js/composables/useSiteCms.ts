@@ -15,6 +15,8 @@ const empty: SiteCmsShared = {
     routes: {
         login: '/staff/login',
         logout: '/staff/login/logout',
+        forgotPassword: '/staff/login/forgot-password',
+        resetPassword: '/staff/login/reset-password',
         dashboard: '/staff/site',
         draft: '/staff/site/draft',
         publish: '/staff/site/publish',
