@@ -2,7 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useSiteCms } from '../../composables/useSiteCms';
-import '../../css/site-cms.css';
+import '../../../css/site-cms.css';
 
 const { siteCms } = useSiteCms();
 

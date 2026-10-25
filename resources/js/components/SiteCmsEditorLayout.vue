@@ -3,7 +3,7 @@ import { router } from '@inertiajs/vue3';
 import SiteCmsControlsPanel from './SiteCmsControlsPanel.vue';
 import { useSiteCms } from '../composables/useSiteCms';
 import { editorUi } from '../editorUi';
-import '../css/site-cms.css';
+import '../../css/site-cms.css';
 
 const { siteCms } = useSiteCms();
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import '../../css/site-cms.css';
+import '../../../css/site-cms.css';
 
 const form = useForm({
     email: '',
