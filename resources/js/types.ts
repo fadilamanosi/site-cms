@@ -1,4 +1,10 @@
-export type SiteCmsKind = 'text' | 'image' | 'color' | 'icon' | 'button' | 'gallery';
+export type SiteCmsKind = 'text' | 'image' | 'color' | 'icon' | 'button' | 'link' | 'gallery';
+
+export type GalleryItem = {
+    src: string;
+    alt: string;
+    caption: string;
+};
 
 export type SiteCmsValue = {
     kind: SiteCmsKind;
@@ -10,6 +16,7 @@ export type SiteCmsPage = {
     path: string;
     component: string;
     label: string;
+    preview_url?: string;
 };
 
 export type SiteCmsSite = {
@@ -22,19 +29,31 @@ export type SiteCmsSite = {
 
 export type SiteCmsShared = {
     enabled: boolean;
+    preview: boolean;
+    embedded: boolean;
     status: 'draft' | 'published';
     pageKey: string;
     values: Record<string, SiteCmsValue>;
     site: SiteCmsSite;
     pages: SiteCmsPage[];
+    draft: {
+        dirty: boolean;
+        count: number;
+    };
     routes: {
         login: string;
+        logout: string | null;
         dashboard: string;
         draft: string;
         publish: string;
         resources: string;
         enter: string;
         exit: string;
+    };
+    upload: {
+        accept: string;
+        imageAccept: string;
+        maxKilobytes: number;
     };
 };
 

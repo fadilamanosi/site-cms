@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $name
  * @property string $url
+ * @property string|null $disk
+ * @property string|null $path
  * @property string|null $type
  * @property string|null $size
  * @property string|null $mime_type
@@ -23,6 +25,8 @@ class SiteResource extends Model
     protected $fillable = [
         'name',
         'url',
+        'disk',
+        'path',
         'type',
         'size',
         'mime_type',

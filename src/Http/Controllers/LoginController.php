@@ -8,12 +8,14 @@ use Illuminate\Routing\Controller;
 use Inertia\Inertia;
 use Inertia\Response;
 use SiteCms\Http\Requests\LoginRequest;
+use SiteCms\Support\DeskResolver;
 use SiteCms\Support\GuardResolver;
 
 class LoginController extends Controller
 {
     public function __construct(
         private readonly GuardResolver $guardResolver,
+        private readonly DeskResolver $deskResolver,
     ) {}
 
     public function create(): Response
@@ -40,7 +42,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(url(config('site-cms.path')));
+        return redirect()->intended(url($this->deskResolver->cmsPath()));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -51,6 +53,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->to(url(config('site-cms.login_path')));
+        return redirect()->to(url($this->deskResolver->loginPath()));
     }
 }

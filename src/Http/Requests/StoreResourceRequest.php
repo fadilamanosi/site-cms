@@ -3,6 +3,7 @@
 namespace SiteCms\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use SiteCms\Support\UploadResolver;
 
 class StoreResourceRequest extends FormRequest
 {
@@ -16,8 +17,15 @@ class StoreResourceRequest extends FormRequest
      */
     public function rules(): array
     {
+        $upload = app(UploadResolver::class);
+
         return [
-            'file' => ['required', 'file', 'max:12288', 'mimes:jpg,jpeg,png,gif,webp,svg,ico'],
+            'file' => [
+                'required',
+                'file',
+                'max:'.$upload->maxKilobytes(),
+                'mimes:'.implode(',', $upload->mimes()),
+            ],
         ];
     }
 }

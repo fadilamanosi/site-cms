@@ -21,7 +21,7 @@ class UpsertDraftRequest extends FormRequest
             'scope_key' => ['nullable', 'string', 'max:100'],
             'fields' => ['required', 'array', 'min:1'],
             'fields.*.field_key' => ['required', 'string', 'max:150'],
-            'fields.*.kind' => ['required', 'in:text,image,color,icon,button,gallery'],
+            'fields.*.kind' => ['required', 'in:text,image,color,icon,button,link,gallery'],
             'fields.*.value' => ['required'],
         ];
     }

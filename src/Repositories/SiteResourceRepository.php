@@ -2,7 +2,7 @@
 
 namespace SiteCms\Repositories;
 
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 use SiteCms\Models\SiteResource;
 
@@ -14,15 +14,23 @@ class SiteResourceRepository
     }
 
     /**
-     * @return Collection<int, SiteResource>
+     * @return LengthAwarePaginator<int, SiteResource>
      */
-    public function listLatest(int $limit = 48): Collection
+    public function paginate(int $page = 1, int $perPage = 24, ?string $type = null): LengthAwarePaginator
     {
+        $page = max(1, $page);
+        $perPage = min(48, max(1, $perPage));
+
         if (! $this->ready()) {
-            return collect();
+            return new LengthAwarePaginator([], 0, $perPage, $page);
         }
 
-        return SiteResource::query()->latest()->limit($limit)->get();
+        $query = SiteResource::query()->latest();
+        if ($type === 'image') {
+            $query->where('mime_type', 'like', 'image/%');
+        }
+
+        return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
     /**
@@ -31,6 +39,17 @@ class SiteResourceRepository
     public function create(array $attributes): SiteResource
     {
         return SiteResource::query()->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function update(SiteResource $resource, array $attributes): SiteResource
+    {
+        $resource->fill($attributes);
+        $resource->save();
+
+        return $resource;
     }
 
     public function find(int $id): ?SiteResource

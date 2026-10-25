@@ -1,0 +1,67 @@
+:root {
+    --scms-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --scms-fast: 160ms;
+    --scms-med: 220ms;
+}
+
+@keyframes scms-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scms-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes scms-pencil-in {
+    from {
+        opacity: 0;
+        transform: scale(0.45);
+    }
+    to {
+        opacity: 0.72;
+        transform: scale(0.9);
+    }
+}
+
+@keyframes scms-ok {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.05);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scms-editor,
+    .scms-card,
+    .scms-canvas iframe,
+    .scms-pencil,
+    .scms-popover,
+    .scms-gallery-item,
+    .scms-btn,
+    .scms-btn--saved,
+    .scms-pop-enter-active,
+    .scms-pop-leave-active,
+    .scms-fold-enter-active,
+    .scms-fold-leave-active,
+    .scms-inspect-enter-active,
+    .scms-inspect-leave-active {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}

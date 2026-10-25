@@ -4,6 +4,7 @@ namespace SiteCms\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use SiteCms\Support\DeskResolver;
 use SiteCms\Support\GuardResolver;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,6 +12,7 @@ class AuthenticateSiteCms
 {
     public function __construct(
         private readonly GuardResolver $guardResolver,
+        private readonly DeskResolver $deskResolver,
     ) {}
 
     /**
@@ -20,7 +22,7 @@ class AuthenticateSiteCms
     {
         $guard = $this->guardResolver->name();
         if (! auth($guard)->check()) {
-            return redirect()->guest(url(config('site-cms.login_path')));
+            return redirect()->guest(url($this->deskResolver->loginPath()));
         }
 
         return $next($request);

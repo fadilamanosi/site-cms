@@ -4,19 +4,13 @@ namespace SiteCms\Support;
 
 class GuardResolver
 {
+    public function __construct(
+        private readonly DeskResolver $deskResolver,
+    ) {}
+
     public function name(): string
     {
-        $configured = config('site-cms.guard');
-        if (is_string($configured) && $configured !== '') {
-            return $configured;
-        }
-
-        $guards = array_keys(config('auth.guards', []));
-        if (in_array('staff', $guards, true)) {
-            return 'staff';
-        }
-
-        return (string) config('auth.defaults.guard', 'web');
+        return $this->deskResolver->guard();
     }
 
     public function userModel(): string

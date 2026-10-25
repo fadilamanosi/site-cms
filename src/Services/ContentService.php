@@ -50,6 +50,32 @@ class ContentService
         }
     }
 
+    /**
+     * @return array{dirty: bool, count: int}
+     */
+    public function draftState(string $pageKey, ?string $scopeKey = null): array
+    {
+        $pages = $pageKey === 'site' ? ['site'] : ['site', $pageKey];
+        $count = 0;
+        foreach (array_unique($pages) as $key) {
+            $scope = $key === 'site' ? null : $scopeKey;
+            $drafts = $this->contentValueRepository->listFor($key, 'draft', $scope)->keyBy('field_key');
+            $published = $this->contentValueRepository->listFor($key, 'published', $scope)->keyBy('field_key');
+            foreach ($drafts as $fieldKey => $draft) {
+                $pub = $published->get($fieldKey);
+                if (
+                    ! $pub
+                    || $draft->kind !== $pub->kind
+                    || json_encode($draft->value) !== json_encode($pub->value)
+                ) {
+                    $count++;
+                }
+            }
+        }
+
+        return ['dirty' => $count > 0, 'count' => $count];
+    }
+
     public function publish(string $pageKey, ?string $scopeKey = null): void
     {
         DB::transaction(function () use ($pageKey, $scopeKey): void {
@@ -87,7 +113,7 @@ class ContentService
                 return $value;
             }
 
-            if (in_array($kind, ['button', 'gallery'], true)) {
+            if (in_array($kind, ['button', 'link', 'gallery'], true)) {
                 return $value;
             }
         }
@@ -97,12 +123,16 @@ class ContentService
 
     private function assertKind(string $kind, mixed $value): void
     {
-        if (! in_array($kind, ['text', 'image', 'color', 'icon', 'button', 'gallery'], true)) {
+        if (! in_array($kind, ['text', 'image', 'color', 'icon', 'button', 'link', 'gallery'], true)) {
             throw new InvalidArgumentException("Unknown kind: {$kind}");
         }
 
-        if ($kind === 'button' && is_array($value) && array_key_exists('label', $value) && ! is_string($value['label'])) {
-            throw new InvalidArgumentException('Button label must be a string.');
+        if (in_array($kind, ['button', 'link'], true) && is_array($value) && array_key_exists('label', $value) && ! is_string($value['label'])) {
+            throw new InvalidArgumentException('Label must be a string.');
+        }
+
+        if ($kind === 'gallery' && is_array($value) && array_key_exists('items', $value) && ! is_array($value['items'])) {
+            throw new InvalidArgumentException('Gallery items must be an array.');
         }
     }
 }

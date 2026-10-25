@@ -1,18 +1,39 @@
 <?php
 
 return [
-    'path' => env('SITE_CMS_PATH', 'staff/site'),
-    'login_path' => env('SITE_CMS_LOGIN_PATH', 'staff/login'),
+    /*
+    | auto: embed when a working authed desk is found, otherwise standalone.
+    | embedded: still probes; falls back to standalone if the desk is dead.
+    | standalone: always use package login + settings pages.
+    */
+    'ui' => env('SITE_CMS_UI', 'auto'),
 
     /*
-    | Auto: "staff" when that guard exists, otherwise the default auth guard.
-    | Set explicitly to skip detection.
+    | Optional desk hints. Tried first, then staff → admin → console.
+    | Embed only if the probe finds a real authed dashboard.
     */
+    'admin_path' => env('SITE_CMS_ADMIN_PATH'),
+    'login_path' => env('SITE_CMS_LOGIN_PATH'),
     'guard' => env('SITE_CMS_GUARD'),
+
+    /*
+    | CMS settings URL. Default: {admin_path}/site or staff/site.
+    */
+    'path' => env('SITE_CMS_PATH'),
 
     'user_model' => env('SITE_CMS_USER_MODEL'),
 
-    'disk' => env('SITE_CMS_DISK', 'public'),
+    /*
+    | Empty: use the host FILESYSTEM_DISK. Set SITE_CMS_DISK to force a disk.
+    | Private local files are served at /site-cms/media/{id}.
+    */
+    'disk' => env('SITE_CMS_DISK'),
+
+    'upload' => [
+        'directory' => env('SITE_CMS_UPLOAD_DIRECTORY', 'site-cms'),
+        'max_kilobytes' => env('SITE_CMS_UPLOAD_MAX_KB'),
+        'mimes' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'ico', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'zip', 'rtf'],
+    ],
 
     'admin' => [
         'email' => env('SITE_CMS_ADMIN_EMAIL'),

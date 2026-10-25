@@ -7,17 +7,25 @@ use SiteCms\Http\Controllers\LoginController;
 use SiteCms\Http\Controllers\ResourceController;
 use SiteCms\Http\Middleware\AuthenticateSiteCms;
 use SiteCms\Http\Middleware\RedirectIfSiteCmsAuthenticated;
+use SiteCms\Support\DeskResolver;
 
-$login = trim((string) config('site-cms.login_path', 'staff/login'), '/');
-$path = trim((string) config('site-cms.path', 'staff/site'), '/');
+$desk = app(DeskResolver::class);
+$login = $desk->loginPath();
+$path = $desk->cmsPath();
 
-Route::middleware('web')->group(function () use ($login, $path): void {
-    Route::middleware(RedirectIfSiteCmsAuthenticated::class)->group(function () use ($login): void {
-        Route::get($login, [LoginController::class, 'create'])->name('site-cms.login');
-        Route::post($login, [LoginController::class, 'store'])->name('site-cms.login.store');
-    });
+Route::middleware('web')->group(function () use ($desk, $login, $path): void {
+    Route::get('/site-cms/media/{id}/{name?}', [ResourceController::class, 'show'])->name('site-cms.media.show')->whereNumber('id')->where('name', '[^/]+');
 
-    Route::post($login.'/logout', [LoginController::class, 'destroy'])->name('site-cms.logout');
+    if (! $desk->embedded()) {
+        if (! $desk->hasGet($login)) {
+            Route::middleware(RedirectIfSiteCmsAuthenticated::class)->group(function () use ($login): void {
+                Route::get($login, [LoginController::class, 'create'])->name('site-cms.login');
+                Route::post($login, [LoginController::class, 'store'])->name('site-cms.login.store');
+            });
+        }
+
+        Route::post($login.'/logout', [LoginController::class, 'destroy'])->name('site-cms.logout');
+    }
 
     Route::middleware(AuthenticateSiteCms::class)->prefix($path)->group(function (): void {
         Route::get('/', [EditorController::class, 'dashboard'])->name('site-cms.dashboard');

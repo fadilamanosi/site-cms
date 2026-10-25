@@ -1,0 +1,236 @@
+@import './site-cms-motion.css';
+
+.scms-shell.scms-shell--on {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+    cursor: default;
+    outline: 1px dashed color-mix(in srgb, currentColor 45%, transparent);
+    outline-offset: 2px;
+    border-radius: 2px;
+    transition: outline-color var(--scms-fast) var(--scms-ease), outline-width var(--scms-fast) var(--scms-ease);
+}
+.scms-shell.scms-shell--on:hover {
+    outline-color: var(--gold, currentColor);
+}
+.scms-shell.scms-shell--block {
+    display: block;
+    width: 100%;
+}
+.scms-shell.scms-shell--active,
+.scms-shell.scms-shell--open {
+    outline: 2px solid var(--gold, currentColor);
+    outline-offset: 2px;
+    z-index: 60;
+}
+.scms-pencil {
+    position: absolute;
+    top: -0.55rem;
+    right: -0.55rem;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    color: var(--bg, hsl(var(--primary-foreground, 0 0% 10%)));
+    box-shadow: 0 4px 12px color-mix(in srgb, #000 28%, transparent);
+    cursor: pointer;
+    opacity: 0.72;
+    transform: scale(0.9);
+    animation: scms-pencil-in var(--scms-med) var(--scms-ease) both;
+    transition:
+        transform var(--scms-fast) var(--scms-ease),
+        opacity var(--scms-fast) var(--scms-ease),
+        box-shadow var(--scms-fast) var(--scms-ease),
+        filter var(--scms-fast) var(--scms-ease);
+}
+.scms-pencil svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    display: block;
+}
+.scms-shell--on:hover .scms-pencil,
+.scms-shell--active .scms-pencil,
+.scms-shell--open .scms-pencil {
+    opacity: 1;
+    transform: scale(1);
+}
+.scms-pencil:hover,
+.scms-pencil:focus-visible {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: brightness(1.08);
+    box-shadow: 0 6px 16px color-mix(in srgb, #000 36%, transparent);
+    outline: 2px solid color-mix(in srgb, var(--gold, currentColor) 50%, transparent);
+    outline-offset: 1px;
+}
+.scms-popover {
+    z-index: 80;
+    max-height: min(24rem, calc(100dvh - 24px));
+    overflow: auto;
+    padding: 0.85rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: var(--radius, 0.75rem);
+    background: var(--bg-2, var(--bg, hsl(var(--card, 0 0% 100%))));
+    color: var(--text, hsl(var(--foreground, 240 6% 10%)));
+    box-shadow: 0 18px 48px color-mix(in srgb, #000 28%, transparent);
+    font-family: var(--sans, var(--font-sans, inherit));
+    transform-origin: top left;
+}
+.scms-pop-enter-active {
+    transition:
+        opacity var(--scms-med) var(--scms-ease),
+        transform var(--scms-med) var(--scms-ease);
+}
+.scms-pop-leave-active {
+    transition: opacity var(--scms-fast) ease, transform var(--scms-fast) ease;
+}
+.scms-pop-enter-from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+}
+.scms-pop-leave-to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+}
+.scms-popover-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.scms-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.scms-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.85rem;
+}
+.scms-field span {
+    font-size: 0.75rem;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    font-weight: 600;
+}
+.scms-field input,
+.scms-field textarea,
+.scms-field select {
+    width: 100%;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: var(--radius, 0.6rem);
+    padding: 0.5rem 0.65rem;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    transition:
+        border-color var(--scms-fast) var(--scms-ease),
+        box-shadow var(--scms-fast) var(--scms-ease);
+}
+.scms-field input:focus,
+.scms-field textarea:focus,
+.scms-field select:focus {
+    outline: none;
+    border-color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold, currentColor) 22%, transparent);
+}
+.scms-check {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.8125rem;
+}
+.scms-check input {
+    width: auto;
+}
+.scms-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    background: transparent;
+    color: var(--text, inherit);
+    border-radius: var(--radius, 0.6rem);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        background var(--scms-fast) var(--scms-ease),
+        border-color var(--scms-fast) var(--scms-ease),
+        color var(--scms-fast) var(--scms-ease),
+        transform var(--scms-fast) var(--scms-ease);
+}
+.scms-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--gold, currentColor) 18%, transparent);
+    border-color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    color: var(--text, inherit);
+}
+.scms-btn:active:not(:disabled) {
+    transform: scale(0.97);
+}
+.scms-btn--saved {
+    animation: scms-ok 480ms var(--scms-ease);
+}
+.scms-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.scms-btn-primary {
+    background: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    border-color: var(--gold, hsl(var(--primary, 38 55% 48%)));
+    color: var(--bg, hsl(var(--primary-foreground, 0 0% 10%)));
+}
+.scms-btn-primary:hover:not(:disabled) {
+    background: var(--gold-soft, var(--gold, hsl(var(--primary, 38 55% 48%))));
+    border-color: var(--gold-soft, var(--gold, hsl(var(--primary, 38 55% 48%))));
+    color: var(--bg, hsl(var(--primary-foreground, 0 0% 10%)));
+    transform: translateY(-1px);
+}
+.scms-muted {
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    font-size: 0.8125rem;
+}
+.scms-error {
+    color: hsl(var(--destructive, 2 65% 48%));
+    font-size: 0.8rem;
+}
+.scms-preview {
+    width: 100%;
+    max-height: 8rem;
+    object-fit: contain;
+    background: color-mix(in srgb, currentColor 6%, transparent);
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: var(--radius, 0.5rem);
+}
+.scms-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+.scms-gallery-item {
+    padding: 0.65rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: var(--radius, 0.6rem);
+    animation: scms-rise var(--scms-med) var(--scms-ease);
+}
+.scms-gallery-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+}

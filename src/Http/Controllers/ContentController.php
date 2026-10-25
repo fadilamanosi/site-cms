@@ -2,6 +2,7 @@
 
 namespace SiteCms\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use SiteCms\Http\Requests\PublishRequest;
@@ -14,7 +15,7 @@ class ContentController extends Controller
         private readonly ContentService $contentService,
     ) {}
 
-    public function draft(UpsertDraftRequest $request): RedirectResponse
+    public function draft(UpsertDraftRequest $request): RedirectResponse|JsonResponse
     {
         $payload = $request->validated();
         $this->contentService->upsertDraft(
@@ -22,6 +23,16 @@ class ContentController extends Controller
             $payload['fields'],
             $payload['scope_key'] ?? null,
         );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'ok' => true,
+                'draft' => $this->contentService->draftState(
+                    $payload['page_key'],
+                    $payload['scope_key'] ?? null,
+                ),
+            ]);
+        }
 
         return back();
     }

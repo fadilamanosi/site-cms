@@ -1,17 +1,8 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useSiteCms } from './useSiteCms';
+import { editorUi } from '../editorUi';
+import { unwrapEntry } from '../fieldValue';
 import type { SiteCmsKind } from '../types';
-
-function unwrap(entry: unknown): unknown {
-    if (entry && typeof entry === 'object' && 'value' in entry) {
-        const inner = (entry as { value: unknown }).value;
-        if (inner && typeof inner === 'object' && 'value' in inner && !('label' in inner) && !('items' in inner)) {
-            return (inner as { value: unknown }).value;
-        }
-        return inner;
-    }
-    return undefined;
-}
+import { useSiteCms } from './useSiteCms';
 
 export function useSiteField(
     fieldKey: MaybeRefOrGetter<string | undefined>,
@@ -25,18 +16,18 @@ export function useSiteField(
         if (!key) {
             return toValue(fallback);
         }
-        const entry = siteCms.value.values[key];
-        if (!entry || entry.kind !== kind) {
-            const raw = unwrap(entry);
-            if (raw !== undefined && raw !== null && raw !== '') {
-                return raw;
-            }
+        const entry = editorUi.live[key] ?? siteCms.value.values[key];
+        if (!entry) {
             return toValue(fallback);
         }
-        const raw = unwrap(entry);
+        const raw = unwrapEntry(entry);
         if (raw === undefined || raw === null || raw === '') {
             return toValue(fallback);
         }
+        if (entry.kind !== kind && kind !== 'link' && kind !== 'button') {
+            return raw;
+        }
+
         return raw;
     });
 

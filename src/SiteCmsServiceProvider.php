@@ -8,12 +8,16 @@ use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 use SiteCms\Console\CreateAdminCommand;
 use SiteCms\Services\ShareService;
+use SiteCms\Support\DeskResolver;
+use SiteCms\Support\UploadResolver;
 
 class SiteCmsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/site-cms.php', 'site-cms');
+        $this->app->singleton(DeskResolver::class);
+        $this->app->singleton(UploadResolver::class);
         $this->app->singleton(ShareService::class);
     }
 
@@ -21,7 +25,6 @@ class SiteCmsServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'site-cms');
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
         $this->publishes([
             __DIR__.'/../config/site-cms.php' => config_path('site-cms.php'),
@@ -47,5 +50,9 @@ class SiteCmsServiceProvider extends ServiceProvider
                 CreateAdminCommand::class,
             ]);
         }
+
+        $this->app->booted(function (): void {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
     }
 }

@@ -3,8 +3,11 @@
 namespace SiteCms\Services;
 
 use Illuminate\Http\Request;
+use SiteCms\Support\DeskResolver;
 use SiteCms\Support\GuardResolver;
 use SiteCms\Support\PageMatcher;
+use SiteCms\Support\Preview;
+use SiteCms\Support\UploadResolver;
 
 class ShareService
 {
@@ -12,6 +15,8 @@ class ShareService
         private readonly ContentService $contentService,
         private readonly PageMatcher $pageMatcher,
         private readonly GuardResolver $guardResolver,
+        private readonly DeskResolver $deskResolver,
+        private readonly UploadResolver $uploadResolver,
     ) {}
 
     /**
@@ -20,30 +25,45 @@ class ShareService
     public function payload(Request $request): array
     {
         $editing = $this->isEditing($request);
+        $preview = Preview::requested($request);
         $matched = $this->pageMatcher->match($request);
-        $pageKey = $matched['key'] ?? 'home';
-        $status = $editing ? 'draft' : 'published';
-        $enabled = $editing && $matched !== null && ! $request->routeIs('site-cms.*');
+        $pageKey = $this->pageKey($request, $matched);
+        $status = $editing && ($preview || $request->routeIs('site-cms.*')) ? 'draft' : 'published';
+        $enabled = $editing && $preview && $matched !== null && ! $request->routeIs('site-cms.*');
 
         $siteValues = $this->contentService->getValues('site', $status);
-        $pageValues = $matched ? $this->contentService->getValues($pageKey, $status) : [];
+        $pageValues = $pageKey !== '' && $pageKey !== 'site'
+            ? $this->contentService->getValues($pageKey, $status)
+            : [];
         $values = [...$siteValues, ...$pageValues];
+        $cmsPath = $this->deskResolver->cmsPath();
+        $loginPath = $this->deskResolver->loginPath();
+        $embedded = $this->deskResolver->embedded();
 
         return [
             'enabled' => $enabled,
+            'preview' => $preview,
+            'embedded' => $embedded,
             'status' => $status,
             'pageKey' => $pageKey,
             'values' => $values,
             'site' => $this->siteFrom($values),
             'pages' => $this->pageMatcher->pages(),
             'routes' => [
-                'login' => url(config('site-cms.login_path')),
-                'dashboard' => url(config('site-cms.path')),
-                'draft' => url(config('site-cms.path').'/draft'),
-                'publish' => url(config('site-cms.path').'/publish'),
-                'resources' => url(config('site-cms.path').'/resources'),
-                'enter' => url(config('site-cms.path').'/enter'),
-                'exit' => url(config('site-cms.path').'/exit'),
+                'login' => $this->href($loginPath),
+                'logout' => $embedded ? null : $this->href($loginPath.'/logout'),
+                'dashboard' => $this->href($cmsPath),
+                'draft' => $this->href($cmsPath.'/draft'),
+                'publish' => $this->href($cmsPath.'/publish'),
+                'resources' => $this->href($cmsPath.'/resources'),
+                'enter' => $this->href($cmsPath.'/enter'),
+                'exit' => $this->href($cmsPath.'/exit'),
+            ],
+            'draft' => $this->contentService->draftState($pageKey === '' ? 'home' : $pageKey),
+            'upload' => [
+                'accept' => $this->uploadResolver->accept('file'),
+                'imageAccept' => $this->uploadResolver->accept('image'),
+                'maxKilobytes' => $this->uploadResolver->maxKilobytes(),
             ],
         ];
     }
@@ -57,7 +77,7 @@ class ShareService
     public function mergePage(string $pageKey, array $page, ?Request $request = null): array
     {
         $request ??= request();
-        $status = $this->isEditing($request) ? 'draft' : 'published';
+        $status = $this->isEditing($request) && Preview::requested($request) ? 'draft' : 'published';
         $siteValues = $this->contentService->getValues('site', $status);
         $pageValues = $this->contentService->getValues($pageKey, $status);
         $values = [...$siteValues, ...$pageValues];
@@ -92,6 +112,21 @@ class ShareService
     }
 
     /**
+     * @param  array{key: string, path: string, component: string, label: string}|null  $matched
+     */
+    private function pageKey(Request $request, ?array $matched): string
+    {
+        if ($request->routeIs('site-cms.dashboard')) {
+            $query = (string) $request->query('page', '');
+            $fromQuery = $this->pageMatcher->byKey($query);
+
+            return $fromQuery['key'] ?? ($this->pageMatcher->pages()[0]['key'] ?? 'home');
+        }
+
+        return $matched['key'] ?? 'home';
+    }
+
+    /**
      * @param  array<string, array{kind: string, value: mixed}>  $values
      * @return array{logo: string|null, favicon: string|null, title: string|null, description: string|null, image: string|null}
      */
@@ -106,6 +141,11 @@ class ShareService
             'description' => $this->scalar($values['site.description'] ?? null) ?? ($defaults['description'] ?? null),
             'image' => $this->scalar($values['site.image'] ?? null) ?? ($defaults['image'] ?? null),
         ];
+    }
+
+    private function href(string $path): string
+    {
+        return '/'.trim($path, '/');
     }
 
     private function scalar(mixed $entry): ?string
