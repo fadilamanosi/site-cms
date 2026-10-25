@@ -1,0 +1,27 @@
+{
+    "name": "fadilamanosi/site-cms",
+    "description": "Draft/publish CMS for Inertia marketing pages: SEO, logo, and field-key overlays.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": ">=11.0",
+        "inertiajs/inertia-laravel": ">=2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SiteCms\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SiteCms\\SiteCmsServiceProvider"
+            ],
+            "aliases": {
+                "SiteCms": "SiteCms\\Facades\\SiteCms"
+            }
+        }
+    },
+    "minimum-stability": "stable"
+}
