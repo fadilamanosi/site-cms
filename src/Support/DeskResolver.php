@@ -92,19 +92,32 @@ class DeskResolver
                 'path' => $desk['path'],
                 'login' => $desk['login'],
                 'guard' => $desk['guard'],
-                'cmsPath' => $this->cmsPathFor($desk['path']),
+                'cmsPath' => $this->configuredCmsPath() ?? $this->embeddedCmsPath($desk['path']),
             ];
         }
 
-        $path = $hint['path'] ?? 'staff';
-
         return $this->resolved = [
             'embedded' => false,
-            'path' => $path,
-            'login' => $hint['login'] ?? $this->configuredLogin() ?? 'staff/login',
+            'path' => $hint['path'] ?? 'cms',
+            'login' => $this->configuredLogin() ?? 'cms/login',
             'guard' => $this->standaloneGuard($hint['guard'] ?? null),
-            'cmsPath' => $this->cmsPathFor($path),
+            'cmsPath' => $this->configuredCmsPath() ?? 'cms',
         ];
+    }
+
+    public function shouldRedirectLegacyStaffPaths(): bool
+    {
+        if ($this->embedded()) {
+            return false;
+        }
+        if ($this->loginPath() === 'staff/login' || str_starts_with($this->cmsPath(), 'staff')) {
+            return false;
+        }
+        if ($this->hasGet('staff/login') || $this->hasGet('staff/site')) {
+            return false;
+        }
+
+        return true;
     }
 
     public function hasGet(string $uri): bool
@@ -193,13 +206,15 @@ class DeskResolver
         return is_string($login) && $login !== '' ? trim($login, '/') : null;
     }
 
-    private function cmsPathFor(string $adminPath): string
+    private function configuredCmsPath(): ?string
     {
         $configured = trim((string) config('site-cms.path', ''), '/');
-        if ($configured !== '') {
-            return $configured;
-        }
 
+        return $configured !== '' ? $configured : null;
+    }
+
+    private function embeddedCmsPath(string $adminPath): string
+    {
         $adminPath = trim($adminPath, '/');
 
         return ($adminPath !== '' ? $adminPath : 'staff').'/site';

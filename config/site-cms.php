@@ -17,7 +17,7 @@ return [
     'guard' => env('SITE_CMS_GUARD'),
 
     /*
-    | CMS settings URL. Default: {admin_path}/site or staff/site.
+    | CMS settings URL. Default: {admin_path}/site when embedded, or /cms standalone.
     */
     'path' => env('SITE_CMS_PATH'),
 

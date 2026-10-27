@@ -30,6 +30,19 @@ Route::middleware('web')->group(function () use ($desk, $login, $path): void {
         }
 
         Route::post($login.'/logout', [LoginController::class, 'destroy'])->name('site-cms.logout');
+
+        if ($desk->shouldRedirectLegacyStaffPaths()) {
+            Route::get('staff', fn () => redirect('/'.$path));
+            Route::get('staff/login', fn () => redirect('/'.$login));
+            Route::get('staff/login/forgot-password', fn () => redirect('/'.$login.'/forgot-password'));
+            Route::get('staff/login/reset-password/{token}', function (string $token) {
+                return redirect()->route('site-cms.password.reset', [
+                    'token' => $token,
+                    ...request()->query(),
+                ]);
+            });
+            Route::get('staff/site', fn () => redirect('/'.$path));
+        }
     }
 
     Route::middleware(AuthenticateSiteCms::class)->prefix($path)->group(function (): void {

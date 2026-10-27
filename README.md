@@ -39,19 +39,19 @@ Public pages render **published** values on the server. Drafts never leak to gue
 `SITE_CMS_UI=auto` (default):
 
 - If the host already has a working authed dashboard, CMS mounts as `{admin}/site` under that desk. No CMS login.
-- Otherwise the package ships `/staff/login` and `/staff/site`. Forgot / reset password on that login uses the host `MAIL_*` mailer (`Mail::to`, default mailer) and the host password-reset broker (`password_reset_tokens`). There is no package mailer.
+- Otherwise the package ships `/cms` (editor) and `/cms/login`. Guest `/cms` redirects to login. Forgot / reset password on that login uses the host `MAIL_*` mailer (`Mail::to`, default mailer) and the host password-reset broker (`password_reset_tokens`). There is no package mailer. `/staff`, `/staff/login`, and `/staff/site` redirect to those URLs.
 
 A desk counts as working only if the guard exists, its user model exists, the prefix has `auth:{guard}` routes, and a guest login GET exists. Config is a hint, then `staff` → `admin` → `console`. A dead hint never embeds.
 
 ```env
 SITE_CMS_UI=auto
 SITE_CMS_ADMIN_PATH=staff
-SITE_CMS_LOGIN_PATH=staff/login
+SITE_CMS_LOGIN_PATH=cms/login
 SITE_CMS_GUARD=staff
-SITE_CMS_PATH=staff/site
+SITE_CMS_PATH=cms
 ```
 
-`/staff/site` is a Customizer: admin bar, left rail, live preview iframe, closable inspector on the right. The site header only appears inside that canvas. Preview URL is the real page with `?site_cms_preview=1`.
+`/cms` is a Customizer: admin bar, left rail, live preview iframe, closable inspector on the right. The site header only appears inside that canvas. Preview URL is the real page with `?site_cms_preview=1`.
 
 - **Left rail** — site identity, SEO, and which page to preview.
 - **Save to draft** — writes identity / SEO from the left rail. Pencil **Update** already drafts that field; you do not need this button for those.
