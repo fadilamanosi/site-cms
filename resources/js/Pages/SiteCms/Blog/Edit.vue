@@ -19,6 +19,7 @@ const props = defineProps<{
 const { siteCms } = useSiteCms();
 const root = ref<HTMLElement | null>(null);
 const seoOpen = ref(false);
+const moreOpen = ref(false);
 
 const form = useForm({
     title: props.post.title ?? '',
@@ -86,6 +87,7 @@ function save(andPublish = false): void {
 }
 
 function togglePublish(): void {
+    moreOpen.value = false;
     if (!props.post.id) {
         return;
     }
@@ -103,6 +105,7 @@ function togglePublish(): void {
 }
 
 function destroy(): void {
+    moreOpen.value = false;
     if (!props.post.id || !window.confirm('Delete this post permanently?')) {
         return;
     }
@@ -117,6 +120,7 @@ function exit(): void {
 }
 
 function viewPublic(): void {
+    moreOpen.value = false;
     if (props.post.href) {
         window.open(props.post.href, '_blank', 'noopener');
     }
@@ -130,7 +134,7 @@ onMounted(() => {
 <template>
     <Head :title="heading" />
     <div ref="root" class="scms-editor scms-blog-desk">
-        <header class="scms-top">
+        <header class="scms-top scms-top--edit">
             <div class="scms-top-lead">
                 <SiteCmsDeskNav active="blog" />
                 <h1>{{ heading }}</h1>
@@ -151,33 +155,16 @@ onMounted(() => {
                     :disabled="form.processing"
                     @click="save(true)"
                 >
-                    Save &amp; publish
+                    Publish
                 </button>
                 <button
-                    v-if="!isNew"
+                    v-else
                     class="scms-btn"
                     type="button"
                     @click="togglePublish"
                 >
-                    {{ post.status === 'published' ? 'Unpublish' : 'Publish' }}
+                    Unpublish
                 </button>
-                <button
-                    v-if="!isNew && post.href"
-                    class="scms-btn"
-                    type="button"
-                    @click="viewPublic"
-                >
-                    View
-                </button>
-                <button
-                    v-if="!isNew"
-                    class="scms-btn"
-                    type="button"
-                    @click="destroy"
-                >
-                    Delete
-                </button>
-                <button class="scms-btn" type="button" @click="mediaUi.show()">Media</button>
                 <Link
                     v-if="siteCms.routes.blogIndex"
                     class="scms-btn"
@@ -185,7 +172,52 @@ onMounted(() => {
                 >
                     All posts
                 </Link>
-                <button class="scms-btn" type="button" @click="exit">Exit</button>
+                <div class="scms-more">
+                    <button
+                        class="scms-btn"
+                        type="button"
+                        :aria-expanded="moreOpen"
+                        @click="moreOpen = !moreOpen"
+                    >
+                        More
+                    </button>
+                    <div v-if="moreOpen" class="scms-more-menu" role="menu">
+                        <button
+                            v-if="!isNew && post.href"
+                            class="scms-more-item"
+                            type="button"
+                            role="menuitem"
+                            @click="viewPublic"
+                        >
+                            View post
+                        </button>
+                        <button
+                            class="scms-more-item"
+                            type="button"
+                            role="menuitem"
+                            @click="moreOpen = false; mediaUi.show()"
+                        >
+                            Media library
+                        </button>
+                        <button
+                            v-if="!isNew"
+                            class="scms-more-item"
+                            type="button"
+                            role="menuitem"
+                            @click="destroy"
+                        >
+                            Delete
+                        </button>
+                        <button
+                            class="scms-more-item"
+                            type="button"
+                            role="menuitem"
+                            @click="moreOpen = false; exit()"
+                        >
+                            Exit editor
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 

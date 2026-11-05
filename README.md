@@ -34,7 +34,7 @@ php artisan site-cms:admin
 7. When blog is enabled, install TipTap peer deps on the host (blog body editor):
 
 ```sh
-npm install @tiptap/vue-3@^2.27.3 @tiptap/starter-kit@^2.27.3 @tiptap/extension-image@^2.27.3 @tiptap/extension-link@^2.27.3 @tiptap/extension-placeholder@^2.27.3 @tiptap/extension-underline@^2.27.3 @tiptap/extension-text-align@^2.27.3
+npm install @tiptap/vue-3@^2.27.3 @tiptap/starter-kit@^2.27.3 @tiptap/extension-image@^2.27.3 @tiptap/extension-link@^2.27.3 @tiptap/extension-placeholder@^2.27.3 @tiptap/extension-underline@^2.27.3 @tiptap/extension-text-align@^2.27.3 @tiptap/extension-table@^2.27.3 @tiptap/extension-table-row@^2.27.3 @tiptap/extension-table-cell@^2.27.3 @tiptap/extension-table-header@^2.27.3 @tiptap/extension-highlight@^2.27.3 @tiptap/extension-character-count@^2.27.3
 ```
 
 

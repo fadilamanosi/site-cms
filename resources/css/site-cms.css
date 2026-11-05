@@ -24,9 +24,53 @@ body:has(.scms-editor) {
     justify-content: space-between;
     gap: 1rem;
     min-height: 3rem;
-    padding: 0 0.85rem 0 1rem;
+    padding: 0.55rem 0.85rem 0.55rem 1rem;
     border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     background: var(--bg-2, var(--bg, hsl(var(--card, 0 0% 100%))));
+}
+.scms-top--edit {
+    flex-wrap: nowrap;
+    overflow: visible;
+    z-index: 5;
+}
+.scms-top--edit .scms-top-lead {
+    flex: 1 1 auto;
+}
+.scms-top--edit .scms-actions {
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.scms-more {
+    position: relative;
+}
+.scms-more-menu {
+    position: absolute;
+    top: calc(100% + 0.3rem);
+    right: 0;
+    z-index: 20;
+    min-width: 11rem;
+    padding: 0.3rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.45rem;
+    background: var(--bg, Canvas);
+    box-shadow: 0 10px 28px color-mix(in oklab, #000 18%, transparent);
+}
+.scms-more-item {
+    display: block;
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 0;
+    border-radius: 0.3rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+}
+.scms-more-item:hover {
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
 }
 .scms-top-lead {
     display: flex;
@@ -831,7 +875,7 @@ body:has(.scms-editor) {
 .scms-rte {
     border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     border-radius: 0.55rem;
-    overflow: hidden;
+    overflow: visible;
     background: var(--bg, Canvas);
 }
 .scms-rte-bar {
@@ -840,10 +884,16 @@ body:has(.scms-editor) {
     z-index: 2;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem;
+    align-items: center;
+    gap: 0.35rem;
     padding: 0.45rem;
     border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+}
+.scms-rte-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
 }
 .scms-rte-bar .scms-btn.is-on {
     background: color-mix(in oklab, var(--text, CanvasText) 12%, transparent);
@@ -852,11 +902,21 @@ body:has(.scms-editor) {
 .scms-rte-sep {
     width: 1px;
     align-self: stretch;
-    margin: 0.15rem 0.2rem;
+    min-height: 1.4rem;
+    margin: 0.15rem 0.15rem;
     background: var(--line, hsl(var(--border, 240 5% 84%)));
 }
 .scms-rte-editor {
     min-height: 22rem;
+}
+.scms-rte-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    padding: 0.45rem 0.75rem;
+    border-top: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    font-size: 0.72rem;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
 }
 .scms-rte-surface {
     min-height: 22rem;
@@ -873,7 +933,7 @@ body:has(.scms-editor) {
     pointer-events: none;
     color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
 }
-.scms-rte-surface :where(h2, h3) {
+.scms-rte-surface :where(h1, h2, h3) {
     margin: 1rem 0 0.45rem;
     font-family: var(--serif, inherit);
 }
@@ -885,18 +945,131 @@ body:has(.scms-editor) {
     border-left: 3px solid var(--line, hsl(var(--border, 240 5% 84%)));
     color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
 }
-.scms-rte-surface img.scms-rte-image,
-.scms-rte-surface img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-    margin: 0.85rem 0;
-    border-radius: 0.4rem;
+.scms-rte-surface mark {
+    background: color-mix(in oklab, #eab308 45%, transparent);
+    padding: 0.05em 0.15em;
+    border-radius: 0.15rem;
+}
+.scms-rte-surface code {
+    padding: 0.1em 0.3em;
+    border-radius: 0.25rem;
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+    font-size: 0.9em;
+}
+.scms-rte-surface pre.scms-rte-codeblock,
+.scms-rte-surface pre {
+    margin: 0 0 0.85rem;
+    padding: 0.75rem 0.85rem;
+    overflow: auto;
+    border-radius: 0.45rem;
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+}
+.scms-rte-surface pre code {
+    padding: 0;
+    background: transparent;
+}
+.scms-rte-surface hr {
+    margin: 1.25rem 0;
+    border: 0;
+    border-top: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
 }
 .scms-rte-surface a {
     color: inherit;
     text-decoration: underline;
     text-underline-offset: 0.12em;
+}
+.scms-rte-surface table.scms-rte-table,
+.scms-rte-surface table {
+    width: 100%;
+    margin: 0 0 1rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+    overflow: hidden;
+}
+.scms-rte-surface th,
+.scms-rte-surface td {
+    position: relative;
+    min-width: 1.5rem;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    vertical-align: top;
+}
+.scms-rte-surface th {
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+    font-weight: 650;
+}
+.scms-rte-surface .selectedCell::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: color-mix(in oklab, var(--text, CanvasText) 8%, transparent);
+    content: '';
+    pointer-events: none;
+}
+.scms-rte-surface .column-resize-handle {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    bottom: -2px;
+    width: 4px;
+    background: color-mix(in oklab, var(--text, CanvasText) 35%, transparent);
+    pointer-events: none;
+}
+
+.scms-rte-img {
+    position: relative;
+    display: block;
+    margin: 0.85rem 0;
+    max-width: 100%;
+}
+.scms-rte-img.is-left {
+    margin-right: auto;
+}
+.scms-rte-img.is-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+.scms-rte-img.is-right {
+    margin-left: auto;
+}
+.scms-rte-img-frame {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+}
+.scms-rte-img.is-center .scms-rte-img-frame {
+    display: block;
+    margin-inline: auto;
+}
+.scms-rte-img img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.4rem;
+}
+.scms-rte-img.is-selected .scms-rte-img-frame {
+    outline: 2px solid color-mix(in oklab, var(--text, CanvasText) 55%, transparent);
+    outline-offset: 2px;
+}
+.scms-rte-img-handle {
+    position: absolute;
+    right: -0.35rem;
+    bottom: -0.35rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    padding: 0;
+    border: 2px solid var(--bg, Canvas);
+    border-radius: 0.15rem;
+    background: var(--text, CanvasText);
+    cursor: nwse-resize;
+}
+.scms-rte-img-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.45rem;
 }
 
 @media (max-width: 900px) {
