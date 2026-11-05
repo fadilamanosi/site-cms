@@ -1,7 +1,15 @@
 @import './site-cms-motion.css';
 
+html:has(.scms-editor),
+body:has(.scms-editor) {
+    height: 100%;
+    overflow: hidden;
+}
 .scms-editor {
+    box-sizing: border-box;
     height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     color-scheme: inherit;
@@ -657,9 +665,11 @@
 
 .scms-blog-desk {
     overflow: hidden;
+    max-height: 100dvh;
 }
 .scms-blog-desk > .scms-top {
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 .scms-blog-toolbar {
     display: flex;
@@ -892,6 +902,7 @@
 @media (max-width: 900px) {
     .scms-blog-edit {
         grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) minmax(12rem, 40%);
     }
     .scms-blog-meta {
         border-left: 0;
