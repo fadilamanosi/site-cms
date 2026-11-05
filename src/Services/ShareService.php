@@ -18,6 +18,7 @@ class ShareService
         private readonly GuardResolver $guardResolver,
         private readonly DeskResolver $deskResolver,
         private readonly UploadResolver $uploadResolver,
+        private readonly BlogService $blogService,
     ) {}
 
     /**
@@ -40,6 +41,8 @@ class ShareService
         $cmsPath = $this->deskResolver->cmsPath();
         $loginPath = $this->deskResolver->loginPath();
         $embedded = $this->deskResolver->embedded();
+        $blogEnabled = $this->blogService->enabled();
+        $blogPath = $this->blogService->indexPath();
 
         return [
             'enabled' => $enabled,
@@ -50,6 +53,12 @@ class ShareService
             'values' => $values,
             'site' => $this->siteFrom($values),
             'pages' => $this->pageMatcher->pages(),
+            'blog' => [
+                'enabled' => $blogEnabled,
+                'indexPath' => $blogPath,
+                'seeMoreLabel' => (string) config('site-cms.blog.see_more_label', 'See more'),
+                'posts' => $editing && $blogEnabled ? $this->blogService->deskList() : [],
+            ],
             'routes' => [
                 'login' => $this->href($loginPath),
                 'logout' => $embedded ? null : $this->href($loginPath.'/logout'),
@@ -65,6 +74,11 @@ class ShareService
                 'resources' => $this->href($cmsPath.'/resources'),
                 'enter' => $this->href($cmsPath.'/enter'),
                 'exit' => $this->href($cmsPath.'/exit'),
+                'blogStore' => $blogEnabled ? $this->href($cmsPath.'/blog') : null,
+                'blogUpdate' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}') : null,
+                'blogPublish' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/publish') : null,
+                'blogUnpublish' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/unpublish') : null,
+                'blogDestroy' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}') : null,
             ],
             'draft' => $this->contentService->draftState($pageKey === '' ? 'home' : $pageKey),
             'upload' => [
@@ -73,6 +87,20 @@ class ShareService
                 'maxKilobytes' => $this->uploadResolver->maxKilobytes(),
             ],
         ];
+    }
+
+    /**
+     * @param  list<string>|string|null  $tags
+     * @return array{items: list<array<string, mixed>>, total: int, seeMore: array{href: string, label: string}|null}
+     */
+    public function blogSection(string|array|null $tags = null, ?int $limit = null): array
+    {
+        return $this->blogService->section($tags, $limit);
+    }
+
+    public function blogPath(): string
+    {
+        return $this->blogService->indexPath();
     }
 
     /**

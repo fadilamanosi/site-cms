@@ -18,6 +18,7 @@ class SiteCmsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/site-cms.php', 'site-cms');
         $this->app->singleton(DeskResolver::class);
         $this->app->singleton(UploadResolver::class);
+        $this->app->singleton(\SiteCms\Services\BlogService::class);
         $this->app->singleton(ShareService::class);
     }
 

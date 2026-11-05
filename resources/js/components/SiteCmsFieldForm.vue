@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
-import { asButton, asGallery, asImage, asText } from '../fieldValue';
+import { asButton, asGallery, asImage, asList, asText } from '../fieldValue';
 import { useSiteCms } from '../composables/useSiteCms';
 import { useSiteCmsDraft } from '../composables/useSiteCmsDraft';
-import type { ActiveField, GalleryItem, SiteCmsKind } from '../types';
+import type { ActiveField, GalleryItem, ListFieldColumn, ListItem, SiteCmsKind } from '../types';
 import SiteCmsGalleryField from './SiteCmsGalleryField.vue';
 import SiteCmsImageField from './SiteCmsImageField.vue';
 import SiteCmsLinkField from './SiteCmsLinkField.vue';
+import SiteCmsListField from './SiteCmsListField.vue';
 
 const props = defineProps<{
     field: ActiveField;
@@ -32,12 +33,23 @@ const inputDownload = ref<boolean | string>(false);
 const inputColor = ref('#000000');
 const inputIcon = ref('');
 const inputItems = ref<GalleryItem[]>([]);
+const inputListItems = ref<ListItem[]>([]);
+const listSchema = ref<ListFieldColumn[]>([]);
 
 const kind = computed(() => props.field.kind);
 const colorSwatch = computed(() => (/^#[0-9a-fA-F]{6}$/.test(inputColor.value) ? inputColor.value : '#000000'));
 
 function currentRaw(): unknown {
     return siteCms.value.values[props.field.fieldKey]?.value ?? props.field.defaultValue;
+}
+
+function listFallback(): { schema: ListFieldColumn[]; items: ListItem[] } {
+    const raw = props.field.defaultValue;
+    if (raw && typeof raw === 'object') {
+        return asList(raw, { schema: [], items: [] });
+    }
+
+    return { schema: [], items: [] };
 }
 
 watch(
@@ -56,6 +68,9 @@ watch(
         inputColor.value = asText(raw, '#000000') || '#000000';
         inputIcon.value = asText(raw, '');
         inputItems.value = asGallery(raw, Array.isArray(raw) ? (raw as GalleryItem[]) : []).items;
+        const list = asList(raw, listFallback());
+        listSchema.value = list.schema;
+        inputListItems.value = list.items;
     },
     { immediate: true, deep: true },
 );
@@ -74,6 +89,9 @@ function payloadValue(next: SiteCmsKind): unknown {
     }
     if (next === 'gallery') {
         return { items: inputItems.value };
+    }
+    if (next === 'list') {
+        return { schema: listSchema.value, items: inputListItems.value };
     }
     if (next === 'color') {
         return inputColor.value;
@@ -125,6 +143,7 @@ onUnmounted(() => {
             v-model:download="inputDownload"
         />
         <SiteCmsGalleryField v-else-if="kind === 'gallery'" v-model="inputItems" />
+        <SiteCmsListField v-else-if="kind === 'list'" v-model="inputListItems" :schema="listSchema" />
         <label v-else-if="kind === 'color'" class="scms-field">
             <span>Color</span>
             <input

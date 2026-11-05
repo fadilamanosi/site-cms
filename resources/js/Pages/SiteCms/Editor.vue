@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import SiteCmsBlogPanel from '../../components/SiteCmsBlogPanel.vue';
 import SiteCmsImageField from '../../components/SiteCmsImageField.vue';
 import SiteCmsInspector from '../../components/SiteCmsInspector.vue';
 import SiteCmsMediaModal from '../../components/SiteCmsMediaModal.vue';
@@ -340,6 +341,7 @@ onUnmounted(() => {
                         </div>
                     </div>
                 </Transition>
+                <SiteCmsBlogPanel />
             </aside>
             <div class="scms-canvas">
                 <iframe

@@ -1,9 +1,53 @@
-export type SiteCmsKind = 'text' | 'image' | 'color' | 'icon' | 'button' | 'link' | 'gallery';
+export type SiteCmsKind = 'text' | 'image' | 'color' | 'icon' | 'button' | 'link' | 'gallery' | 'list';
 
 export type GalleryItem = {
     src: string;
     alt: string;
     caption: string;
+};
+
+export type ListFieldColumn = {
+    key: string;
+    label: string;
+    type?: 'text' | 'url' | 'image';
+};
+
+export type ListItem = Record<string, string>;
+
+export type ListValue = {
+    schema: ListFieldColumn[];
+    items: ListItem[];
+};
+
+export type BlogCover = {
+    src: string;
+    alt: string;
+};
+
+export type BlogPostCard = {
+    id: number;
+    slug: string;
+    title: string;
+    excerpt: string;
+    href: string;
+    cover: BlogCover;
+    publishedAt: string | null;
+    tags: string[];
+    body?: string;
+    status?: 'draft' | 'published';
+    seo?: {
+        title: string | null;
+        description: string | null;
+        image: string | null;
+    };
+    sortOrder?: number;
+    updatedAt?: string | null;
+};
+
+export type BlogSectionFeed = {
+    items: BlogPostCard[];
+    total: number;
+    seeMore: { href: string; label: string } | null;
 };
 
 export type SiteCmsValue = {
@@ -36,6 +80,12 @@ export type SiteCmsShared = {
     values: Record<string, SiteCmsValue>;
     site: SiteCmsSite;
     pages: SiteCmsPage[];
+    blog: {
+        enabled: boolean;
+        indexPath: string;
+        seeMoreLabel: string;
+        posts: BlogPostCard[];
+    };
     draft: {
         dirty: boolean;
         count: number;
@@ -51,6 +101,11 @@ export type SiteCmsShared = {
         resources: string;
         enter: string;
         exit: string;
+        blogStore: string | null;
+        blogUpdate: string | null;
+        blogPublish: string | null;
+        blogUnpublish: string | null;
+        blogDestroy: string | null;
     };
     upload: {
         accept: string;

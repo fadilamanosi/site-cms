@@ -1,4 +1,4 @@
-import type { GalleryItem, SiteCmsKind } from './types';
+import type { GalleryItem, ListFieldColumn, ListItem, ListValue, SiteCmsKind } from './types';
 
 export type ButtonValue = {
     label: string;
@@ -107,6 +107,44 @@ export function asGallery(raw: unknown, fallback: GalleryItem[] = []): GalleryVa
     };
 }
 
+export function asList(raw: unknown, fallback: ListValue): ListValue {
+    const schema = (raw && typeof raw === 'object' && Array.isArray((raw as { schema?: unknown }).schema)
+        ? ((raw as { schema: ListFieldColumn[] }).schema)
+        : fallback.schema
+    ).map((column) => ({
+        key: String(column.key),
+        label: String(column.label ?? column.key),
+        type: column.type === 'url' || column.type === 'image' ? column.type : 'text',
+    }));
+
+    const source = Array.isArray(raw)
+        ? raw
+        : raw && typeof raw === 'object' && Array.isArray((raw as { items?: unknown }).items)
+          ? ((raw as { items: unknown[] }).items)
+          : fallback.items;
+
+    const items: ListItem[] = source.map((item) => {
+        const row: ListItem = {};
+        const record = item && typeof item === 'object' ? (item as Record<string, unknown>) : {};
+        for (const column of schema) {
+            row[column.key] = String(record[column.key] ?? '');
+        }
+
+        return row;
+    });
+
+    return { schema, items };
+}
+
+export function emptyListItem(schema: ListFieldColumn[]): ListItem {
+    const row: ListItem = {};
+    for (const column of schema) {
+        row[column.key] = '';
+    }
+
+    return row;
+}
+
 export function linkTypeFromHref(href: string, download?: boolean | string): LinkType {
     if (download === true || (typeof download === 'string' && download !== '')) {
         return 'download';
@@ -186,7 +224,7 @@ export function prettyLabel(fieldKey: string, label?: string): string {
 }
 
 export function storedValue(kind: SiteCmsKind, value: unknown): unknown {
-    if (kind === 'button' || kind === 'link' || kind === 'gallery') {
+    if (kind === 'button' || kind === 'link' || kind === 'gallery' || kind === 'list') {
         return value;
     }
     if (kind === 'image' && value && typeof value === 'object') {

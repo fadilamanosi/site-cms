@@ -56,4 +56,20 @@ return [
         'description' => null,
         'image' => null,
     ],
+
+    /*
+    | Blog posts (package-owned). Hosts render Blog/Index + Blog/Show with their theme.
+    | Bound sections call SiteCms::blogSection() for page-1 items + a See more link.
+    */
+    'blog' => [
+        'enabled' => (bool) env('SITE_CMS_BLOG', false),
+        'path' => env('SITE_CMS_BLOG_PATH', 'blog'),
+        'per_page' => (int) env('SITE_CMS_BLOG_PER_PAGE', 12),
+        'section_per_page' => (int) env('SITE_CMS_BLOG_SECTION_PER_PAGE', 5),
+        'see_more_label' => env('SITE_CMS_BLOG_SEE_MORE', 'See more'),
+        'index_title' => env('SITE_CMS_BLOG_INDEX_TITLE', 'Blog'),
+        'index_description' => env('SITE_CMS_BLOG_INDEX_DESCRIPTION', ''),
+        'index_component' => 'Blog/Index',
+        'show_component' => 'Blog/Show',
+    ],
 ];

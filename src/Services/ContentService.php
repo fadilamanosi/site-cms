@@ -113,7 +113,7 @@ class ContentService
                 return $value;
             }
 
-            if (in_array($kind, ['button', 'link', 'gallery'], true)) {
+            if (in_array($kind, ['button', 'link', 'gallery', 'list'], true)) {
                 return $value;
             }
         }
@@ -123,7 +123,7 @@ class ContentService
 
     private function assertKind(string $kind, mixed $value): void
     {
-        if (! in_array($kind, ['text', 'image', 'color', 'icon', 'button', 'link', 'gallery'], true)) {
+        if (! in_array($kind, ['text', 'image', 'color', 'icon', 'button', 'link', 'gallery', 'list'], true)) {
             throw new InvalidArgumentException("Unknown kind: {$kind}");
         }
 
@@ -131,8 +131,8 @@ class ContentService
             throw new InvalidArgumentException('Label must be a string.');
         }
 
-        if ($kind === 'gallery' && is_array($value) && array_key_exists('items', $value) && ! is_array($value['items'])) {
-            throw new InvalidArgumentException('Gallery items must be an array.');
+        if (in_array($kind, ['gallery', 'list'], true) && is_array($value) && array_key_exists('items', $value) && ! is_array($value['items'])) {
+            throw new InvalidArgumentException(ucfirst($kind).' items must be an array.');
         }
     }
 }

@@ -11,6 +11,12 @@ const empty: SiteCmsShared = {
     values: {},
     site: { logo: null, favicon: null, title: null, description: null, image: null },
     pages: [],
+    blog: {
+        enabled: false,
+        indexPath: '/blog',
+        seeMoreLabel: 'See more',
+        posts: [],
+    },
     draft: { dirty: false, count: 0 },
     routes: {
         login: '/cms/login',
@@ -23,6 +29,11 @@ const empty: SiteCmsShared = {
         resources: '/cms/resources',
         enter: '/cms/enter',
         exit: '/cms/exit',
+        blogStore: null,
+        blogUpdate: null,
+        blogPublish: null,
+        blogUnpublish: null,
+        blogDestroy: null,
     },
     upload: {
         accept: '.jpg,.jpeg,.png,.gif,.webp,.svg,.ico,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rtf',

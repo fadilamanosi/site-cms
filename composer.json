@@ -1,6 +1,6 @@
 {
     "name": "fadilamanosi/site-cms",
-    "description": "Draft/publish CMS for Inertia marketing pages: SEO, logo, and field-key overlays.",
+    "description": "Draft/publish CMS for Inertia marketing pages: SEO, logo, field lists, and blog.",
     "type": "library",
     "license": "MIT",
     "require": {

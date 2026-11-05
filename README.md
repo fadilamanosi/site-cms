@@ -28,9 +28,9 @@ php artisan site-cms:admin
 1. Vite alias `@site-cms` → `vendor/fadilamanosi/site-cms/resources/js`
 2. Resolve Inertia pages with `resolveSiteCmsPage`
 3. `@include('site-cms::head')` in `app.blade.php` (needs the Inertia `$page` variable)
-4. `TextUi` / `ImageUi` / `ButtonUi` / a gallery wrapper honor optional `field-key`
+4. `TextUi` / `ImageUi` / `ButtonUi` / a gallery or list wrapper honor optional `field-key`
 5. `SiteCms::mergePage('home', $payload)` in the page service so SEO is in the first HTML
-6. Publish `config/site-cms.php` for logo defaults and page list
+6. Publish `config/site-cms.php` for logo defaults, page list, and optional blog
 
 Public pages render **published** values on the server. Drafts never leak to guests.
 
@@ -49,11 +49,12 @@ SITE_CMS_ADMIN_PATH=staff
 SITE_CMS_LOGIN_PATH=cms/login
 SITE_CMS_GUARD=staff
 SITE_CMS_PATH=cms
+SITE_CMS_BLOG=true
 ```
 
 `/cms` is a Customizer: admin bar, left rail, live preview iframe, closable inspector on the right. The site header only appears inside that canvas. Preview URL is the real page with `?site_cms_preview=1`.
 
-- **Left rail** — site identity, SEO, and which page to preview.
+- **Left rail** — site identity, SEO, which page to preview, and (when enabled) **Blog** posts.
 - **Save to draft** — writes identity / SEO from the left rail. Pencil **Update** already drafts that field; you do not need this button for those.
 - **Publish** — makes unpublished drafts live. Disabled when there is nothing to publish.
 - Pencils in the preview open the **right inspector** (same pencil or × closes it). The preview stays where you scrolled; the field patches in place after Update.
@@ -62,14 +63,82 @@ Field kinds:
 
 - **text** — copy
 - **link** / **button** — label, URL / email / phone, open in a new tab, or **download** (upload/replace a file)
-- **image** / **gallery** — media library, upload, or URL (gallery rows collapse)
+- **image** / **gallery** — media library, upload, or URL (gallery rows collapse; add / reorder / remove)
+- **list** — typed rows with a host-provided schema (add / duplicate / reorder / remove). Example socials: `label`, `href`, `handle`
 - **color** / **icon** — picker or name
 
-Kind comes from the host wrapper (`ButtonUi` → button, `ImageUi` → image). `mailto:` and `tel:` hrefs open the email / phone fields. A `download` attribute on the host button opens the file picker.
+Kind comes from the host wrapper (`ButtonUi` → button, `ImageUi` → image, `ListUi` → list). `mailto:` and `tel:` hrefs open the email / phone fields. A `download` attribute on the host button opens the file picker.
 
 **Media** in the top bar (and **Select media** on image fields) opens a paginated library: existing uploads, drop/upload, or paste a remote URL. Stored library paths are not shown in the paste field.
 
 Chrome uses the host theme tokens (`--bg`, `--text`, `--gold` / `--gold-soft`, or `--background` / `--primary`). The package does not ship a second admin look.
+
+## Lists
+
+Host wraps a repeating block with `ListUi` (same pattern as `GalleryUi`):
+
+```vue
+<ListUi
+  field-key="site.socials"
+  :schema="[
+    { key: 'label', label: 'Label', type: 'text' },
+    { key: 'href', label: 'URL', type: 'url' },
+    { key: 'handle', label: 'Handle', type: 'text' },
+  ]"
+  :default-items="socialLinks"
+  v-slot="{ items }"
+>
+  <!-- host markup over items -->
+</ListUi>
+```
+
+Stored value shape: `{ schema, items }`. Guests see published items only.
+
+## Blog
+
+Enable with `SITE_CMS_BLOG=true` (or `config/site-cms.php` `blog.enabled`).
+
+Package owns:
+
+- `site_cms_posts` table
+- Desk CRUD in the left **Blog** rail
+- Public routes `/{blog.path}` and `/{blog.path}/{slug}`
+
+Host owns look:
+
+- Inertia pages `Blog/Index` and `Blog/Show` (override via `blog.index_component` / `blog.show_component`)
+- Section markup that consumes the documented card shape
+
+### Post card (documented)
+
+```
+id, slug, title, excerpt, href, cover { src, alt }, publishedAt, tags[]
+```
+
+Detail adds `body`, `seo`, `sortOrder`, `updatedAt`.
+
+### Bound section (not the full blog page)
+
+```php
+$archive = SiteCms::blogSection('archive'); // or ['archive'], optional $limit
+// → items (page 1), total, seeMore { href, label } | null
+```
+
+Rules:
+
+- Section shows **page 1** only (`blog.section_per_page`, default 5)
+- **See more** links to the main blog index (`/blog` or `/blog?tag=…`)
+- Full pagination lives on the blog index only
+- Guests only see **published** posts
+
+Example home merge:
+
+```php
+return SiteCms::mergePage('home', [
+    ...$pageData,
+    'archive' => SiteCms::blogSection('archive'),
+]);
+```
 
 ## Files
 

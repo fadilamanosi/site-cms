@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use SiteCms\Http\Controllers\BlogController;
+use SiteCms\Http\Controllers\BlogDeskController;
 use SiteCms\Http\Controllers\ContentController;
 use SiteCms\Http\Controllers\EditorController;
 use SiteCms\Http\Controllers\LoginController;
@@ -16,6 +18,12 @@ $path = $desk->cmsPath();
 
 Route::middleware('web')->group(function () use ($desk, $login, $path): void {
     Route::get('/site-cms/media/{id}/{name?}', [ResourceController::class, 'show'])->name('site-cms.media.show')->whereNumber('id')->where('name', '[^/]+');
+
+    if (config('site-cms.blog.enabled')) {
+        $blog = trim((string) config('site-cms.blog.path', 'blog'), '/');
+        Route::get($blog, [BlogController::class, 'index'])->name('site-cms.blog.index');
+        Route::get($blog.'/{slug}', [BlogController::class, 'show'])->name('site-cms.blog.show')->where('slug', '[A-Za-z0-9\-]+');
+    }
 
     if (! $desk->embedded()) {
         if (! $desk->hasGet($login)) {
@@ -54,5 +62,13 @@ Route::middleware('web')->group(function () use ($desk, $login, $path): void {
         Route::get('/resources', [ResourceController::class, 'index'])->name('site-cms.resources.index');
         Route::post('/resources', [ResourceController::class, 'store'])->name('site-cms.resources.store');
         Route::delete('/resources/{id}', [ResourceController::class, 'destroy'])->name('site-cms.resources.destroy');
+
+        if (config('site-cms.blog.enabled')) {
+            Route::post('/blog', [BlogDeskController::class, 'store'])->name('site-cms.blog.store');
+            Route::put('/blog/{id}', [BlogDeskController::class, 'update'])->name('site-cms.blog.update')->whereNumber('id');
+            Route::post('/blog/{id}/publish', [BlogDeskController::class, 'publish'])->name('site-cms.blog.publish')->whereNumber('id');
+            Route::post('/blog/{id}/unpublish', [BlogDeskController::class, 'unpublish'])->name('site-cms.blog.unpublish')->whereNumber('id');
+            Route::delete('/blog/{id}', [BlogDeskController::class, 'destroy'])->name('site-cms.blog.destroy')->whereNumber('id');
+        }
     });
 });

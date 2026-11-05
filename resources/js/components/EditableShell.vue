@@ -20,12 +20,12 @@ const { resolved } = useSiteField(() => props.fieldKey, props.kind, () => props.
 const shell = ref<HTMLElement | null>(null);
 const passThrough = ref(true);
 const teleportTo = ref<string | HTMLElement>('body');
-const pencilInside = ref(props.kind === 'image' || props.kind === 'gallery');
+const pencilInside = ref(props.kind === 'image' || props.kind === 'gallery' || props.kind === 'list');
 const ready = ref(false);
 let pencilHost: HTMLElement | null = null;
 
 const active = computed(() => siteCms.value.enabled && editorUi.active?.fieldKey === props.fieldKey);
-const block = computed(() => props.kind === 'gallery');
+const block = computed(() => props.kind === 'gallery' || props.kind === 'list');
 const image = computed(() => props.kind === 'image');
 const pass = computed(() => passThrough.value);
 
@@ -59,7 +59,7 @@ function syncLayout(): void {
     if (!host) {
         passThrough.value = false;
         teleportTo.value = 'body';
-        pencilInside.value = props.kind === 'image' || props.kind === 'gallery';
+        pencilInside.value = props.kind === 'image' || props.kind === 'gallery' || props.kind === 'list';
         ready.value = true;
         return;
     }
@@ -76,7 +76,7 @@ function syncLayout(): void {
     }
 
     passThrough.value = true;
-    pencilInside.value = props.kind === 'gallery' || props.kind === 'image';
+    pencilInside.value = props.kind === 'gallery' || props.kind === 'list' || props.kind === 'image';
     if (!absolute) {
         host.classList.add('scms-pencil-host');
         pencilHost = host;
