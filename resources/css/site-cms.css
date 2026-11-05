@@ -658,6 +658,9 @@
 .scms-blog-desk {
     overflow: hidden;
 }
+.scms-blog-desk > .scms-top {
+    flex-shrink: 0;
+}
 .scms-blog-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -757,9 +760,13 @@
     grid-template-columns: minmax(0, 1fr) 18.5rem;
     flex: 1;
     min-height: 0;
+    overflow: hidden;
 }
 .scms-blog-main {
-    overflow: auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 1rem 1.15rem 2rem;
 }
 .scms-blog-title-field {
@@ -779,7 +786,10 @@
     outline: none;
 }
 .scms-blog-meta {
-    overflow: auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     border-left: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     background: var(--bg-2, var(--bg, hsl(var(--sidebar, 0 0% 98%))));
     padding: 0.85rem;
@@ -815,12 +825,28 @@
     background: var(--bg, Canvas);
 }
 .scms-rte-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
     padding: 0.45rem;
     border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+}
+.scms-rte-bar .scms-btn.is-on {
+    background: color-mix(in oklab, var(--text, CanvasText) 12%, transparent);
+    border-color: var(--line, hsl(var(--border, 240 5% 84%)));
+}
+.scms-rte-sep {
+    width: 1px;
+    align-self: stretch;
+    margin: 0.15rem 0.2rem;
+    background: var(--line, hsl(var(--border, 240 5% 84%)));
+}
+.scms-rte-editor {
+    min-height: 22rem;
 }
 .scms-rte-surface {
     min-height: 22rem;
@@ -829,10 +855,13 @@
     font-size: 0.95rem;
     line-height: 1.65;
 }
-.scms-rte-surface:empty::before {
+.scms-rte-surface p.is-editor-empty:first-child::before,
+.scms-rte-surface.ProseMirror p.is-empty:first-child::before {
     content: attr(data-placeholder);
-    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    float: left;
+    height: 0;
     pointer-events: none;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
 }
 .scms-rte-surface :where(h2, h3) {
     margin: 1rem 0 0.45rem;
@@ -845,6 +874,19 @@
     padding-left: 0.85rem;
     border-left: 3px solid var(--line, hsl(var(--border, 240 5% 84%)));
     color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+}
+.scms-rte-surface img.scms-rte-image,
+.scms-rte-surface img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0.85rem 0;
+    border-radius: 0.4rem;
+}
+.scms-rte-surface a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
 }
 
 @media (max-width: 900px) {

@@ -31,6 +31,12 @@ php artisan site-cms:admin
 4. `TextUi` / `ImageUi` / `ButtonUi` / a gallery or list wrapper honor optional `field-key`
 5. `SiteCms::mergePage('home', $payload)` in the page service so SEO is in the first HTML
 6. Publish `config/site-cms.php` for logo defaults, page list, and optional blog
+7. When blog is enabled, install TipTap peer deps on the host (blog body editor):
+
+```sh
+npm install @tiptap/vue-3@^2.27.3 @tiptap/starter-kit@^2.27.3 @tiptap/extension-image@^2.27.3 @tiptap/extension-link@^2.27.3 @tiptap/extension-placeholder@^2.27.3 @tiptap/extension-underline@^2.27.3 @tiptap/extension-text-align@^2.27.3
+```
+
 
 Public pages render **published** values on the server. Drafts never leak to guests.
 
@@ -54,7 +60,8 @@ SITE_CMS_BLOG=true
 
 `/cms` is a Customizer: admin bar, left rail, live preview iframe, closable inspector on the right. The site header only appears inside that canvas. Preview URL is the real page with `?site_cms_preview=1`.
 
-- **Left rail** — site identity, SEO, which page to preview, and (when enabled) **Blog** posts.
+- **Left rail** — site identity, SEO, and which page to preview.
+- **Header nav** — when blog is enabled, **Customize | Blog** opens the posts desk (`/{cms}/blog`): paginated list + TipTap editor (images use the same media library).
 - **Save to draft** — writes identity / SEO from the left rail. Pencil **Update** already drafts that field; you do not need this button for those.
 - **Publish** — makes unpublished drafts live. Disabled when there is nothing to publish.
 - Pencils in the preview open the **right inspector** (same pencil or × closes it). The preview stays where you scrolled; the field patches in place after Update.
@@ -101,7 +108,7 @@ Enable with `SITE_CMS_BLOG=true` (or `config/site-cms.php` `blog.enabled`).
 Package owns:
 
 - `site_cms_posts` table
-- Desk CRUD in the left **Blog** rail
+- Desk at `/{cms}/blog` (paginated list) and `/{cms}/blog/new` / `/{cms}/blog/{id}/edit` (TipTap editor + media library)
 - Public routes `/{blog.path}` and `/{blog.path}/{slug}`
 
 Host owns look:
