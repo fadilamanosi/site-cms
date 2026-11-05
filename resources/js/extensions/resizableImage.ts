@@ -9,15 +9,26 @@ export const ResizableImage = Image.extend({
             ...this.parent?.(),
             width: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('width') || element.style.width || null,
+                parseHTML: (element) => {
+                    const styleWidth = element.style.width;
+                    if (styleWidth) {
+                        return styleWidth;
+                    }
+                    const attr = element.getAttribute('width');
+                    if (!attr) {
+                        return null;
+                    }
+                    // Legacy px attrs become fluid percentages at render time via max-width.
+                    return /^\d+$/.test(attr) ? `${attr}px` : attr;
+                },
                 renderHTML: (attributes) => {
-                    if (!attributes.width) {
-                        return {};
+                    const width = attributes.width as string | null;
+                    if (!width) {
+                        return { style: 'max-width: 100%; height: auto;' };
                     }
 
                     return {
-                        width: attributes.width,
-                        style: `width: ${attributes.width}`,
+                        style: `width: ${width}; max-width: 100%; height: auto;`,
                     };
                 },
             },

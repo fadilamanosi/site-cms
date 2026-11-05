@@ -5,12 +5,30 @@ import { mediaUi } from '../mediaUi';
 
 const props = defineProps(nodeViewProps);
 const resizing = ref(false);
+const altDraft = ref('');
+const editingAlt = ref(false);
 
 const align = computed(() => (props.node.attrs.align as string) || 'center');
 const widthStyle = computed(() => {
     const width = props.node.attrs.width as string | null;
-    return width ? { width } : undefined;
+    if (!width) {
+        return { maxWidth: '100%' };
+    }
+
+    return { width, maxWidth: '100%' };
 });
+
+function containerWidth(img: HTMLElement): number {
+    const container = img.closest('.ProseMirror') as HTMLElement | null;
+
+    return Math.max(1, (container?.clientWidth ?? img.parentElement?.clientWidth ?? 1) - 8);
+}
+
+function toPercent(px: number, max: number): string {
+    const pct = Math.round((px / max) * 100);
+
+    return `${Math.min(100, Math.max(10, pct))}%`;
+}
 
 function startResize(event: PointerEvent): void {
     event.preventDefault();
@@ -21,16 +39,18 @@ function startResize(event: PointerEvent): void {
     }
     const startX = event.clientX;
     const startWidth = img.getBoundingClientRect().width;
-    const container = img.closest('.ProseMirror') as HTMLElement | null;
-    const max = container ? container.clientWidth - 8 : 1200;
+    const max = containerWidth(img);
     resizing.value = true;
 
     const onMove = (move: PointerEvent): void => {
         const delta = move.clientX - startX;
-        const next = Math.min(max, Math.max(96, Math.round(startWidth + delta)));
+        const next = Math.min(max, Math.max(max * 0.1, Math.round(startWidth + delta)));
+        // Live preview in px while dragging; commit as % on release.
         props.updateAttributes({ width: `${next}px` });
     };
     const onUp = (): void => {
+        const current = img.getBoundingClientRect().width;
+        props.updateAttributes({ width: toPercent(current, max) });
         resizing.value = false;
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
@@ -47,13 +67,14 @@ function setWidth(next: string | null): void {
     props.updateAttributes({ width: next });
 }
 
-function editAlt(): void {
-    const current = typeof props.node.attrs.alt === 'string' ? props.node.attrs.alt : '';
-    const next = window.prompt('Image alt text', current);
-    if (next === null) {
-        return;
-    }
-    props.updateAttributes({ alt: next });
+function startAlt(): void {
+    altDraft.value = typeof props.node.attrs.alt === 'string' ? props.node.attrs.alt : '';
+    editingAlt.value = true;
+}
+
+function saveAlt(): void {
+    props.updateAttributes({ alt: altDraft.value.trim() });
+    editingAlt.value = false;
 }
 
 function replaceImage(): void {
@@ -92,8 +113,19 @@ function replaceImage(): void {
             <button class="scms-btn" type="button" title="75% width" @click="setWidth('75%')">75%</button>
             <button class="scms-btn" type="button" title="Full width" @click="setWidth('100%')">100%</button>
             <button class="scms-btn" type="button" title="Reset size" @click="setWidth(null)">Auto</button>
-            <button class="scms-btn" type="button" title="Edit alt text" @click="editAlt">Alt</button>
+            <button class="scms-btn" type="button" title="Edit alt text" @click="startAlt">Alt</button>
             <button class="scms-btn" type="button" title="Replace image" @click="replaceImage">Replace</button>
+        </div>
+        <div v-if="selected && editingAlt" class="scms-rte-img-alt" contenteditable="false">
+            <input
+                v-model="altDraft"
+                type="text"
+                placeholder="Describe this image"
+                @keydown.enter.prevent="saveAlt"
+                @keydown.escape.prevent="editingAlt = false"
+            />
+            <button class="scms-btn scms-btn-primary" type="button" @click="saveAlt">Save alt</button>
+            <button class="scms-btn" type="button" @click="editingAlt = false">Cancel</button>
         </div>
     </NodeViewWrapper>
 </template>

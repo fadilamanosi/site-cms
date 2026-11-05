@@ -11,7 +11,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useSiteCmsUpload } from '../composables/useSiteCmsUpload';
 import { ResizableImage } from '../extensions/resizableImage';
 import { mediaUi } from '../mediaUi';
@@ -25,6 +25,9 @@ const props = withDefaults(defineProps<{
 });
 
 const toolbarTick = ref(0);
+const linkOpen = ref(false);
+const linkUrl = ref('https://');
+const linkInput = ref<HTMLInputElement | null>(null);
 const { upload } = useSiteCmsUpload();
 let syncingFromParent = false;
 
@@ -193,22 +196,37 @@ function run(command: () => void): void {
     toolbarTick.value += 1;
 }
 
-function setLink(): void {
+function openLinkPanel(): void {
     const current = editor.value;
     if (!current) {
         return;
     }
-    if (current.isActive('link')) {
-        current.chain().focus().unsetLink().run();
-        toolbarTick.value += 1;
+    const existing = current.getAttributes('link').href;
+    linkUrl.value = typeof existing === 'string' && existing ? existing : 'https://';
+    linkOpen.value = true;
+    void nextTick(() => {
+        linkInput.value?.focus();
+        linkInput.value?.select();
+    });
+}
+
+function applyLink(): void {
+    const current = editor.value;
+    if (!current) {
         return;
     }
-    const existing = current.getAttributes('link').href;
-    const href = window.prompt('Link URL', typeof existing === 'string' && existing ? existing : 'https://');
+    const href = linkUrl.value.trim();
     if (!href) {
         return;
     }
     current.chain().focus().extendMarkRange('link').setLink({ href }).run();
+    linkOpen.value = false;
+    toolbarTick.value += 1;
+}
+
+function removeLink(): void {
+    editor.value?.chain().focus().extendMarkRange('link').unsetLink().run();
+    linkOpen.value = false;
     toolbarTick.value += 1;
 }
 
@@ -268,7 +286,37 @@ function insertTable(): void {
             </div>
             <span class="scms-rte-sep" aria-hidden="true" />
             <div class="scms-rte-group">
-                <button class="scms-btn" type="button" title="Link" :class="{ 'is-on': isActive('link') }" @click="setLink">Link</button>
+                <div class="scms-rte-link-wrap">
+                    <button
+                        class="scms-btn"
+                        type="button"
+                        title="Link"
+                        :class="{ 'is-on': isActive('link') || linkOpen }"
+                        :aria-expanded="linkOpen"
+                        @click="openLinkPanel"
+                    >
+                        Link
+                    </button>
+                    <div v-if="linkOpen" class="scms-rte-link-panel" role="dialog" aria-label="Edit link">
+                        <label class="scms-field">
+                            <span>URL</span>
+                            <input
+                                ref="linkInput"
+                                v-model="linkUrl"
+                                type="url"
+                                inputmode="url"
+                                placeholder="https://"
+                                @keydown.enter.prevent="applyLink"
+                                @keydown.escape.prevent="linkOpen = false"
+                            />
+                        </label>
+                        <div class="scms-rte-link-actions">
+                            <button class="scms-btn scms-btn-primary" type="button" @click="applyLink">Apply</button>
+                            <button v-if="isActive('link')" class="scms-btn" type="button" @click="removeLink">Remove</button>
+                            <button class="scms-btn" type="button" @click="linkOpen = false">Cancel</button>
+                        </div>
+                    </div>
+                </div>
                 <button class="scms-btn scms-btn-primary" type="button" title="Insert image from media library" @click="insertImage">Image</button>
                 <button class="scms-btn" type="button" title="Insert table" :class="{ 'is-on': isActive('table') }" @click="insertTable">Table</button>
                 <button
