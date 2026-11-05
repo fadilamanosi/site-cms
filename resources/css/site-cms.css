@@ -658,14 +658,6 @@
 .scms-blog-desk {
     overflow: hidden;
 }
-.scms-blog-list-shell {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    min-height: 0;
-    width: min(100% - 2rem, 52rem);
-    margin: 0 auto;
-}
 .scms-blog-toolbar {
     display: flex;
     flex-wrap: wrap;

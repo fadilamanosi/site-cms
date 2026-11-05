@@ -123,7 +123,7 @@ onMounted(() => {
 
 <template>
     <Head title="Blog" />
-    <div ref="root" class="scms-editor scms-blog-desk scms-blog-desk--list">
+    <div ref="root" class="scms-editor scms-blog-desk">
         <header class="scms-top">
             <div class="scms-top-lead">
                 <SiteCmsDeskNav active="blog" />
@@ -150,120 +150,118 @@ onMounted(() => {
             </div>
         </header>
 
-        <div class="scms-blog-list-shell">
-            <div class="scms-blog-toolbar">
-                <form class="scms-blog-search" @submit.prevent="submitSearch">
-                    <input v-model="search" type="search" placeholder="Search posts…" />
-                    <button class="scms-btn" type="submit">Search</button>
-                </form>
-                <div class="scms-blog-filters" role="group" aria-label="Status">
-                    <button
-                        class="scms-btn"
-                        type="button"
-                        :class="{ 'scms-btn-primary': !statusFilter }"
-                        @click="setStatus('')"
-                    >
-                        All
-                    </button>
-                    <button
-                        class="scms-btn"
-                        type="button"
-                        :class="{ 'scms-btn-primary': statusFilter === 'published' }"
-                        @click="setStatus('published')"
-                    >
-                        Published
-                    </button>
-                    <button
-                        class="scms-btn"
-                        type="button"
-                        :class="{ 'scms-btn-primary': statusFilter === 'draft' }"
-                        @click="setStatus('draft')"
-                    >
-                        Drafts
-                    </button>
-                </div>
-            </div>
-
-            <div class="scms-blog-list">
-                <table class="scms-blog-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="post in pager.data" :key="post.id">
-                            <td>
-                                <Link class="scms-blog-title" :href="editUrl(post.id)">{{ post.title }}</Link>
-                                <p v-if="post.excerpt" class="scms-muted scms-blog-excerpt">{{ post.excerpt }}</p>
-                            </td>
-                            <td>
-                                <span
-                                    class="scms-blog-status"
-                                    :class="post.status === 'published' ? 'is-live' : 'is-draft'"
-                                >
-                                    {{ post.status === 'published' ? 'Published' : 'Draft' }}
-                                </span>
-                            </td>
-                            <td>{{ formatDate(post.updatedAt ?? post.publishedAt) }}</td>
-                            <td>
-                                <div class="scms-gallery-tools" style="margin: 0">
-                                    <Link class="scms-btn" :href="editUrl(post.id)">Edit</Link>
-                                    <button
-                                        v-if="post.status !== 'published'"
-                                        class="scms-btn"
-                                        type="button"
-                                        @click="publish(post.id)"
-                                    >
-                                        Publish
-                                    </button>
-                                    <button
-                                        v-else
-                                        class="scms-btn"
-                                        type="button"
-                                        @click="unpublish(post.id)"
-                                    >
-                                        Unpublish
-                                    </button>
-                                    <button class="scms-btn" type="button" @click="destroy(post.id)">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="pager.data.length === 0">
-                            <td colspan="4" class="scms-blog-empty">
-                                No posts yet.
-                                <Link v-if="siteCms.routes.blogCreate" :href="siteCms.routes.blogCreate">
-                                    Write the first one
-                                </Link>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <nav class="scms-pager" aria-label="Blog pages">
+        <div class="scms-blog-toolbar">
+            <form class="scms-blog-search" @submit.prevent="submitSearch">
+                <input v-model="search" type="search" placeholder="Search posts…" />
+                <button class="scms-btn" type="submit">Search</button>
+            </form>
+            <div class="scms-blog-filters" role="group" aria-label="Status">
                 <button
                     class="scms-btn"
                     type="button"
-                    :disabled="pager.current_page <= 1"
-                    @click="go(pager.current_page - 1)"
+                    :class="{ 'scms-btn-primary': !statusFilter }"
+                    @click="setStatus('')"
                 >
-                    Prev
+                    All
                 </button>
-                <span>Page {{ pager.current_page }} of {{ pager.last_page }} · {{ pager.total }} posts</span>
                 <button
                     class="scms-btn"
                     type="button"
-                    :disabled="pager.current_page >= pager.last_page"
-                    @click="go(pager.current_page + 1)"
+                    :class="{ 'scms-btn-primary': statusFilter === 'published' }"
+                    @click="setStatus('published')"
                 >
-                    Next
+                    Published
                 </button>
-            </nav>
+                <button
+                    class="scms-btn"
+                    type="button"
+                    :class="{ 'scms-btn-primary': statusFilter === 'draft' }"
+                    @click="setStatus('draft')"
+                >
+                    Drafts
+                </button>
+            </div>
         </div>
+
+        <div class="scms-blog-list">
+            <table class="scms-blog-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="post in pager.data" :key="post.id">
+                        <td>
+                            <Link class="scms-blog-title" :href="editUrl(post.id)">{{ post.title }}</Link>
+                            <p v-if="post.excerpt" class="scms-muted scms-blog-excerpt">{{ post.excerpt }}</p>
+                        </td>
+                        <td>
+                            <span
+                                class="scms-blog-status"
+                                :class="post.status === 'published' ? 'is-live' : 'is-draft'"
+                            >
+                                {{ post.status === 'published' ? 'Published' : 'Draft' }}
+                            </span>
+                        </td>
+                        <td>{{ formatDate(post.updatedAt ?? post.publishedAt) }}</td>
+                        <td>
+                            <div class="scms-gallery-tools" style="margin: 0">
+                                <Link class="scms-btn" :href="editUrl(post.id)">Edit</Link>
+                                <button
+                                    v-if="post.status !== 'published'"
+                                    class="scms-btn"
+                                    type="button"
+                                    @click="publish(post.id)"
+                                >
+                                    Publish
+                                </button>
+                                <button
+                                    v-else
+                                    class="scms-btn"
+                                    type="button"
+                                    @click="unpublish(post.id)"
+                                >
+                                    Unpublish
+                                </button>
+                                <button class="scms-btn" type="button" @click="destroy(post.id)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="pager.data.length === 0">
+                        <td colspan="4" class="scms-blog-empty">
+                            No posts yet.
+                            <Link v-if="siteCms.routes.blogCreate" :href="siteCms.routes.blogCreate">
+                                Write the first one
+                            </Link>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav class="scms-pager" aria-label="Blog pages">
+            <button
+                class="scms-btn"
+                type="button"
+                :disabled="pager.current_page <= 1"
+                @click="go(pager.current_page - 1)"
+            >
+                Prev
+            </button>
+            <span>Page {{ pager.current_page }} of {{ pager.last_page }} · {{ pager.total }} posts</span>
+            <button
+                class="scms-btn"
+                type="button"
+                :disabled="pager.current_page >= pager.last_page"
+                @click="go(pager.current_page + 1)"
+            >
+                Next
+            </button>
+        </nav>
 
         <SiteCmsMediaModal />
     </div>
