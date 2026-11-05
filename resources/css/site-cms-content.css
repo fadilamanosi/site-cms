@@ -1,0 +1,99 @@
+/**
+ * Public rendering for TipTap blog HTML saved by Site CMS.
+ * Layout mirrors the editor (block images + data-align), not float wrap.
+ */
+.scms-content {
+    line-height: 1.65;
+}
+.scms-content > *:first-child {
+    margin-top: 0;
+}
+.scms-content > *:last-child {
+    margin-bottom: 0;
+}
+.scms-content :where(p, ul, ol, blockquote, pre, table) {
+    margin: 0 0 0.75rem;
+}
+.scms-content :where(h1, h2, h3) {
+    margin: 1rem 0 0.45rem;
+    line-height: 1.2;
+}
+.scms-content ul,
+.scms-content ol {
+    padding-left: 1.25rem;
+}
+.scms-content blockquote {
+    margin-left: 0;
+    padding-left: 0.85rem;
+    border-left: 3px solid currentColor;
+    opacity: 0.9;
+}
+.scms-content a {
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+}
+.scms-content mark {
+    padding: 0.05em 0.15em;
+    border-radius: 0.15rem;
+}
+.scms-content code {
+    padding: 0.1em 0.3em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+.scms-content pre {
+    margin: 0 0 0.85rem;
+    padding: 0.75rem 0.85rem;
+    overflow: auto;
+    border-radius: 0.45rem;
+}
+.scms-content pre code {
+    padding: 0;
+    background: transparent;
+}
+.scms-content hr {
+    margin: 1.25rem 0;
+    border: 0;
+    border-top: 1px solid currentColor;
+    opacity: 0.35;
+}
+.scms-content table {
+    width: 100%;
+    margin: 0 0 1rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.scms-content th,
+.scms-content td {
+    padding: 0.4rem 0.55rem;
+    border: 1px solid currentColor;
+    vertical-align: top;
+}
+.scms-content th {
+    font-weight: 650;
+}
+
+/* Match editor NodeView: block image + data-align margins (not float). */
+.scms-content img,
+.scms-content img.scms-rte-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0.85rem 0;
+    border-radius: 0.4rem;
+}
+.scms-content img[data-align='left'],
+.scms-content img.scms-rte-image[data-align='left'] {
+    margin-left: 0;
+    margin-right: auto;
+}
+.scms-content img[data-align='center'],
+.scms-content img.scms-rte-image[data-align='center'] {
+    margin-left: auto;
+    margin-right: auto;
+}
+.scms-content img[data-align='right'],
+.scms-content img.scms-rte-image[data-align='right'] {
+    margin-left: auto;
+    margin-right: 0;
+}
