@@ -32,6 +32,31 @@ class SitePostRepository
     }
 
     /**
+     * @return LengthAwarePaginator<int, SitePost>
+     */
+    public function paginateForDesk(int $perPage = 20, int $page = 1, ?string $status = null, ?string $search = null): LengthAwarePaginator
+    {
+        $query = SitePost::query()
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id');
+
+        if ($status === 'published' || $status === 'draft') {
+            $query->where('status', $status);
+        }
+
+        if (is_string($search) && trim($search) !== '') {
+            $term = '%'.trim($search).'%';
+            $query->where(function (Builder $inner) use ($term): void {
+                $inner->where('title', 'like', $term)
+                    ->orWhere('slug', 'like', $term)
+                    ->orWhere('excerpt', 'like', $term);
+            });
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page);
+    }
+
+    /**
      * @param  list<string>|null  $tags
      * @return LengthAwarePaginator<int, SitePost>
      */

@@ -65,6 +65,7 @@ return [
         'enabled' => (bool) env('SITE_CMS_BLOG', false),
         'path' => env('SITE_CMS_BLOG_PATH', 'blog'),
         'per_page' => (int) env('SITE_CMS_BLOG_PER_PAGE', 12),
+        'desk_per_page' => (int) env('SITE_CMS_BLOG_DESK_PER_PAGE', 20),
         'section_per_page' => (int) env('SITE_CMS_BLOG_SECTION_PER_PAGE', 5),
         'see_more_label' => env('SITE_CMS_BLOG_SEE_MORE', 'See more'),
         'index_title' => env('SITE_CMS_BLOG_INDEX_TITLE', 'Blog'),

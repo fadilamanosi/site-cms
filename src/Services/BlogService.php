@@ -145,6 +145,85 @@ class BlogService
     }
 
     /**
+     * @return array{
+     *     data: list<array<string, mixed>>,
+     *     current_page: int,
+     *     last_page: int,
+     *     per_page: int,
+     *     total: int,
+     *     status: string|null,
+     *     q: string
+     * }
+     */
+    public function deskIndex(Request $request): array
+    {
+        $status = $request->query('status');
+        $status = is_string($status) && in_array($status, ['draft', 'published'], true) ? $status : null;
+        $search = is_string($request->query('q')) ? trim((string) $request->query('q')) : '';
+        $page = max(1, (int) $request->query('page', 1));
+        $perPage = max(1, (int) config('site-cms.blog.desk_per_page', 20));
+        $pager = $this->posts->paginateForDesk($perPage, $page, $status, $search !== '' ? $search : null);
+
+        return [
+            'data' => collect($pager->items())
+                ->map(fn (SitePost $post): array => [
+                    ...$this->detail($post),
+                    'status' => $post->status,
+                ])
+                ->values()
+                ->all(),
+            'current_page' => $pager->currentPage(),
+            'last_page' => max(1, $pager->lastPage()),
+            'per_page' => $pager->perPage(),
+            'total' => $pager->total(),
+            'status' => $status,
+            'q' => $search,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function blankPost(): array
+    {
+        return [
+            'id' => null,
+            'slug' => '',
+            'title' => '',
+            'excerpt' => '',
+            'href' => $this->indexPath().'/',
+            'cover' => ['src' => '', 'alt' => ''],
+            'publishedAt' => null,
+            'tags' => [],
+            'body' => '',
+            'status' => 'draft',
+            'seo' => [
+                'title' => null,
+                'description' => null,
+                'image' => null,
+            ],
+            'sortOrder' => 0,
+            'updatedAt' => null,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function deskPost(int $id): array
+    {
+        $post = $this->posts->find($id);
+        if ($post === null) {
+            abort(404);
+        }
+
+        return [
+            ...$this->detail($post),
+            'status' => $post->status,
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>  $input
      */
     public function store(array $input): SitePost

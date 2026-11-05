@@ -57,7 +57,6 @@ class ShareService
                 'enabled' => $blogEnabled,
                 'indexPath' => $blogPath,
                 'seeMoreLabel' => (string) config('site-cms.blog.see_more_label', 'See more'),
-                'posts' => $editing && $blogEnabled ? $this->blogService->deskList() : [],
             ],
             'routes' => [
                 'login' => $this->href($loginPath),
@@ -74,6 +73,9 @@ class ShareService
                 'resources' => $this->href($cmsPath.'/resources'),
                 'enter' => $this->href($cmsPath.'/enter'),
                 'exit' => $this->href($cmsPath.'/exit'),
+                'blogIndex' => $blogEnabled ? $this->href($cmsPath.'/blog') : null,
+                'blogCreate' => $blogEnabled ? $this->href($cmsPath.'/blog/new') : null,
+                'blogEdit' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/edit') : null,
                 'blogStore' => $blogEnabled ? $this->href($cmsPath.'/blog') : null,
                 'blogUpdate' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}') : null,
                 'blogPublish' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/publish') : null,

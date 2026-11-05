@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import SiteCmsBlogPanel from '../../components/SiteCmsBlogPanel.vue';
+import SiteCmsDeskNav from '../../components/SiteCmsDeskNav.vue';
 import SiteCmsImageField from '../../components/SiteCmsImageField.vue';
 import SiteCmsInspector from '../../components/SiteCmsInspector.vue';
 import SiteCmsMediaModal from '../../components/SiteCmsMediaModal.vue';
@@ -221,7 +221,10 @@ onUnmounted(() => {
     <Head title="Customize" />
     <div ref="root" class="scms-editor">
         <header class="scms-top">
-            <h1>{{ page.label }}</h1>
+            <div class="scms-top-lead">
+                <SiteCmsDeskNav active="customize" />
+                <h1>{{ page.label }}</h1>
+            </div>
             <div class="scms-actions">
                 <button
                     class="scms-btn scms-btn-draft"
@@ -341,7 +344,6 @@ onUnmounted(() => {
                         </div>
                     </div>
                 </Transition>
-                <SiteCmsBlogPanel />
             </aside>
             <div class="scms-canvas">
                 <iframe

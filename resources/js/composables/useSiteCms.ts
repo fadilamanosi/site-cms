@@ -15,7 +15,6 @@ const empty: SiteCmsShared = {
         enabled: false,
         indexPath: '/blog',
         seeMoreLabel: 'See more',
-        posts: [],
     },
     draft: { dirty: false, count: 0 },
     routes: {
@@ -29,6 +28,9 @@ const empty: SiteCmsShared = {
         resources: '/cms/resources',
         enter: '/cms/enter',
         exit: '/cms/exit',
+        blogIndex: null,
+        blogCreate: null,
+        blogEdit: null,
         blogStore: null,
         blogUpdate: null,
         blogPublish: null,

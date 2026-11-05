@@ -84,7 +84,6 @@ export type SiteCmsShared = {
         enabled: boolean;
         indexPath: string;
         seeMoreLabel: string;
-        posts: BlogPostCard[];
     };
     draft: {
         dirty: boolean;
@@ -101,6 +100,9 @@ export type SiteCmsShared = {
         resources: string;
         enter: string;
         exit: string;
+        blogIndex: string | null;
+        blogCreate: string | null;
+        blogEdit: string | null;
         blogStore: string | null;
         blogUpdate: string | null;
         blogPublish: string | null;

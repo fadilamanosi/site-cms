@@ -64,6 +64,9 @@ Route::middleware('web')->group(function () use ($desk, $login, $path): void {
         Route::delete('/resources/{id}', [ResourceController::class, 'destroy'])->name('site-cms.resources.destroy');
 
         if (config('site-cms.blog.enabled')) {
+            Route::get('/blog', [BlogDeskController::class, 'index'])->name('site-cms.blog.desk');
+            Route::get('/blog/new', [BlogDeskController::class, 'create'])->name('site-cms.blog.create');
+            Route::get('/blog/{id}/edit', [BlogDeskController::class, 'edit'])->name('site-cms.blog.edit')->whereNumber('id');
             Route::post('/blog', [BlogDeskController::class, 'store'])->name('site-cms.blog.store');
             Route::put('/blog/{id}', [BlogDeskController::class, 'update'])->name('site-cms.blog.update')->whereNumber('id');
             Route::post('/blog/{id}/publish', [BlogDeskController::class, 'publish'])->name('site-cms.blog.publish')->whereNumber('id');

@@ -20,11 +20,43 @@
     border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
     background: var(--bg-2, var(--bg, hsl(var(--card, 0 0% 100%))));
 }
+.scms-top-lead {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+}
 .scms-top h1 {
     margin: 0;
     font-size: 0.92rem;
     font-weight: 650;
     font-family: var(--serif, inherit);
+}
+.scms-desk-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.15rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.45rem;
+    background: var(--bg, Canvas);
+}
+.scms-desk-nav__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.65rem;
+    border-radius: 0.32rem;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+.scms-desk-nav__link:hover {
+    color: var(--text, CanvasText);
+}
+.scms-desk-nav__link.is-active {
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+    color: var(--text, CanvasText);
 }
 .scms-actions {
     display: flex;
@@ -621,4 +653,206 @@
 .scms-pager .scms-btn:disabled {
     opacity: 0.45;
     cursor: default;
+}
+
+.scms-blog-desk {
+    overflow: hidden;
+}
+.scms-blog-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+}
+.scms-blog-search {
+    display: flex;
+    gap: 0.45rem;
+    flex: 1;
+    min-width: 12rem;
+    max-width: 24rem;
+}
+.scms-blog-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.4rem;
+    background: var(--bg, Canvas);
+    color: inherit;
+    font: inherit;
+    font-size: 0.85rem;
+}
+.scms-blog-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+.scms-blog-list {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+.scms-blog-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.scms-blog-table th,
+.scms-blog-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    text-align: left;
+    vertical-align: top;
+}
+.scms-blog-table th {
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+}
+.scms-blog-title {
+    color: inherit;
+    font-weight: 650;
+    text-decoration: none;
+}
+.scms-blog-title:hover {
+    text-decoration: underline;
+}
+.scms-blog-excerpt {
+    margin: 0.25rem 0 0;
+    font-size: 0.78rem;
+    max-width: 36rem;
+}
+.scms-blog-status {
+    display: inline-flex;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+}
+.scms-blog-status.is-live {
+    background: color-mix(in oklab, #16a34a 18%, transparent);
+    color: #15803d;
+}
+.scms-blog-status.is-draft {
+    background: color-mix(in oklab, var(--muted, #64748b) 18%, transparent);
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+}
+.scms-blog-empty {
+    padding: 2.5rem 1rem !important;
+    text-align: center;
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+}
+.scms-blog-empty a {
+    color: inherit;
+    font-weight: 650;
+}
+
+.scms-blog-edit {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18.5rem;
+    flex: 1;
+    min-height: 0;
+}
+.scms-blog-main {
+    overflow: auto;
+    padding: 1rem 1.15rem 2rem;
+}
+.scms-blog-title-field {
+    margin-bottom: 0.85rem;
+}
+.scms-blog-title-input {
+    width: 100%;
+    padding: 0.55rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 1.55rem;
+    font-weight: 650;
+    font-family: var(--serif, inherit);
+    outline: none;
+}
+.scms-blog-meta {
+    overflow: auto;
+    border-left: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    background: var(--bg-2, var(--bg, hsl(var(--sidebar, 0 0% 98%))));
+    padding: 0.85rem;
+}
+.scms-blog-card {
+    margin-bottom: 0.85rem;
+    padding: 0.75rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.5rem;
+    background: var(--bg, Canvas);
+}
+.scms-blog-card h2 {
+    margin: 0 0 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+.scms-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.scms-rte {
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.55rem;
+    overflow: hidden;
+    background: var(--bg, Canvas);
+}
+.scms-rte-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    padding: 0.45rem;
+    border-bottom: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    background: var(--bg-2, hsl(var(--muted, 240 5% 96%)));
+}
+.scms-rte-surface {
+    min-height: 22rem;
+    padding: 1rem 1.05rem;
+    outline: none;
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+.scms-rte-surface:empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    pointer-events: none;
+}
+.scms-rte-surface :where(h2, h3) {
+    margin: 1rem 0 0.45rem;
+    font-family: var(--serif, inherit);
+}
+.scms-rte-surface :where(p, ul, ol, blockquote) {
+    margin: 0 0 0.75rem;
+}
+.scms-rte-surface blockquote {
+    padding-left: 0.85rem;
+    border-left: 3px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+}
+
+@media (max-width: 900px) {
+    .scms-blog-edit {
+        grid-template-columns: 1fr;
+    }
+    .scms-blog-meta {
+        border-left: 0;
+        border-top: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    }
 }
