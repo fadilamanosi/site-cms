@@ -123,7 +123,38 @@ class BlogService
                 'image' => $post->seo_image ?: ($post->cover_src ?? ''),
             ],
             'post' => $this->detail($post),
+            'more' => $this->morePosts($post),
         ];
+    }
+
+    /**
+     * Other published posts to list under a single post.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function morePosts(SitePost $post, ?int $limit = null): array
+    {
+        $limit ??= max(1, (int) config('site-cms.blog.more_per_page', 3));
+        $tags = $this->normalizeTags($post->tags ?? []);
+        $preferred = array_values(array_filter(
+            $tags,
+            fn (string $tag): bool => ! in_array($tag, ['archive'], true),
+        ));
+        $filter = $preferred !== [] ? [$preferred[0]] : null;
+
+        $items = $this->posts->publishedExcept($post->id, $limit, $filter);
+        if ($items->count() < $limit && $filter !== null) {
+            $extra = $this->posts->publishedExcept($post->id, $limit, null)
+                ->reject(fn (SitePost $other): bool => $items->contains('id', $other->id))
+                ->take($limit - $items->count());
+            $items = $items->concat($extra)->values();
+        }
+
+        return $items
+            ->take($limit)
+            ->map(fn (SitePost $other): array => $this->card($other))
+            ->values()
+            ->all();
     }
 
     /**

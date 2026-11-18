@@ -83,6 +83,18 @@ class SitePostRepository
     }
 
     /**
+     * @param  list<string>|null  $tags
+     * @return Collection<int, SitePost>
+     */
+    public function publishedExcept(int $excludeId, int $limit, ?array $tags = null): Collection
+    {
+        return $this->publishedQuery($tags)
+            ->where('id', '!=', $excludeId)
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
      * @param  array<string, mixed>  $attributes
      */
     public function create(array $attributes): SitePost
