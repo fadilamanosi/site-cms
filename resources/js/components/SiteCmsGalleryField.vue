@@ -15,7 +15,7 @@ function add(): void {
     mediaUi.show(
         '',
         (url, name) => {
-            items.value = [
+            const next = [
                 ...items.value,
                 {
                     src: url,
@@ -23,7 +23,8 @@ function add(): void {
                     caption: '',
                 },
             ];
-            open.value = items.value.length - 1;
+            items.value = next;
+            open.value = next.length - 1;
         },
         'image',
     );

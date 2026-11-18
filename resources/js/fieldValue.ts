@@ -107,15 +107,27 @@ export function asGallery(raw: unknown, fallback: GalleryItem[] = []): GalleryVa
     };
 }
 
-export function asList(raw: unknown, fallback: ListValue): ListValue {
-    const schema = (raw && typeof raw === 'object' && Array.isArray((raw as { schema?: unknown }).schema)
-        ? ((raw as { schema: ListFieldColumn[] }).schema)
-        : fallback.schema
-    ).map((column) => ({
+function listColumn(column: ListFieldColumn): ListFieldColumn {
+    return {
         key: String(column.key),
         label: String(column.label ?? column.key),
         type: column.type === 'url' || column.type === 'image' ? column.type : 'text',
-    }));
+    };
+}
+
+export function asList(raw: unknown, fallback: ListValue): ListValue {
+    const stored = raw && typeof raw === 'object' && Array.isArray((raw as { schema?: unknown }).schema)
+        ? ((raw as { schema: ListFieldColumn[] }).schema)
+        : [];
+    const schema = (stored.length > 0 ? stored : fallback.schema).map(listColumn);
+    const known = new Set(schema.map((column) => column.key));
+    for (const column of fallback.schema) {
+        const next = listColumn(column);
+        if (!known.has(next.key)) {
+            schema.push(next);
+            known.add(next.key);
+        }
+    }
 
     const source = Array.isArray(raw)
         ? raw

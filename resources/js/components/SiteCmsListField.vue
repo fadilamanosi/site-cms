@@ -24,8 +24,9 @@ function toggle(index: number): void {
 }
 
 function add(): void {
-    items.value = [...items.value, emptyListItem(columns.value)];
-    open.value = items.value.length - 1;
+    const next = [...items.value, emptyListItem(columns.value)];
+    items.value = next;
+    open.value = next.length - 1;
 }
 
 function duplicate(index: number): void {
