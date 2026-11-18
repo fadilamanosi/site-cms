@@ -28,6 +28,7 @@ export type BlogPostCard = {
     id: number;
     slug: string;
     title: string;
+    label?: string;
     excerpt: string;
     href: string;
     cover: BlogCover;

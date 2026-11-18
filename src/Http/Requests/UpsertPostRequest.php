@@ -19,6 +19,7 @@ class UpsertPostRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:160'],
+            'label' => ['nullable', 'string', 'max:120'],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'body' => ['nullable', 'string'],
             'cover_src' => ['nullable', 'string', 'max:2048'],

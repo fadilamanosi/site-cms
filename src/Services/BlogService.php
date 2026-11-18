@@ -221,6 +221,7 @@ class BlogService
             'id' => null,
             'slug' => '',
             'title' => '',
+            'label' => '',
             'excerpt' => '',
             'href' => $this->indexPath().'/',
             'cover' => ['src' => '', 'alt' => ''],
@@ -330,6 +331,7 @@ class BlogService
             'id' => $post->id,
             'slug' => $post->slug,
             'title' => $post->title,
+            'label' => (string) ($post->label ?? ''),
             'excerpt' => $post->excerpt,
             'href' => $this->indexPath().'/'.$post->slug,
             'cover' => [
@@ -388,6 +390,7 @@ class BlogService
         return [
             'title' => $title,
             'slug' => $slug,
+            'label' => trim((string) ($input['label'] ?? $existing?->label ?? '')),
             'excerpt' => trim((string) ($input['excerpt'] ?? $existing?->excerpt ?? '')),
             'body' => (string) ($input['body'] ?? $existing?->body ?? ''),
             'cover_src' => $this->nullableString($input['cover_src'] ?? $existing?->cover_src),

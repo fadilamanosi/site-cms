@@ -14,6 +14,7 @@ class SitePost extends Model
     protected $fillable = [
         'slug',
         'title',
+        'label',
         'excerpt',
         'body',
         'cover_src',

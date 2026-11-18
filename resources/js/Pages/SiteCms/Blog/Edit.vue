@@ -23,6 +23,7 @@ const moreOpen = ref(false);
 
 const form = useForm({
     title: props.post.title ?? '',
+    label: props.post.label ?? '',
     slug: props.post.slug ?? '',
     excerpt: props.post.excerpt ?? '',
     body: props.post.body ?? '',
@@ -40,6 +41,7 @@ watch(
     () => props.post,
     (next) => {
         form.title = next.title ?? '';
+        form.label = next.label ?? '';
         form.slug = next.slug ?? '';
         form.excerpt = next.excerpt ?? '';
         form.body = next.body ?? '';
@@ -234,6 +236,20 @@ onMounted(() => {
             </div>
 
             <aside class="scms-blog-meta">
+                <section class="scms-blog-card">
+                    <h2>Label</h2>
+                    <label class="scms-field">
+                        <span class="scms-sr">Label</span>
+                        <input
+                            v-model="form.label"
+                            type="text"
+                            placeholder="e.g. Personal reflection"
+                        />
+                    </label>
+                    <p class="scms-muted" style="margin: 0.35rem 0 0; font-size: 0.8rem">Shown above the title on the public site.</p>
+                    <p v-if="form.errors.label" class="scms-error">{{ form.errors.label }}</p>
+                </section>
+
                 <section class="scms-blog-card">
                     <h2>Publish</h2>
                     <label class="scms-field">
