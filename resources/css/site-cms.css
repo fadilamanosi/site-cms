@@ -805,6 +805,10 @@ body:has(.scms-editor) {
     background: color-mix(in oklab, var(--muted, #64748b) 18%, transparent);
     color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
 }
+.scms-blog-status.is-pending {
+    background: color-mix(in oklab, #d97706 18%, transparent);
+    color: #b45309;
+}
 .scms-blog-empty {
     padding: 2.5rem 1rem !important;
     text-align: center;
@@ -947,9 +951,17 @@ body:has(.scms-editor) {
     margin: 0 0 0.75rem;
 }
 .scms-rte-surface blockquote {
-    padding-left: 0.85rem;
-    border-left: 3px solid var(--line, hsl(var(--border, 240 5% 84%)));
-    color: var(--muted, hsl(var(--muted-foreground, 240 4% 46%)));
+    margin: 1rem 0;
+    padding: 0.35rem 0 0.35rem 0.95rem;
+    border-left: 3px solid color-mix(in oklab, var(--gold, hsl(var(--primary, 38 55% 48%))) 85%, transparent);
+    color: inherit;
+    font-family: var(--serif, inherit);
+    font-size: 1.15em;
+    font-style: italic;
+    line-height: 1.35;
+}
+.scms-rte-surface blockquote p {
+    margin: 0;
 }
 .scms-rte-surface mark {
     background: color-mix(in oklab, #eab308 45%, transparent);
@@ -1122,6 +1134,98 @@ body:has(.scms-editor) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
+}
+
+.scms-rte-gallery {
+    margin: 0.85rem 0;
+    padding: 0.65rem;
+    border: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+    border-radius: 0.55rem;
+    background: color-mix(in oklab, currentColor 3%, transparent);
+}
+.scms-rte-gallery-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.55rem;
+    margin-bottom: 0.65rem;
+}
+.scms-rte-gallery-layout {
+    margin: 0;
+    min-width: 9rem;
+}
+.scms-rte-gallery .scms-gallery-block {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+.scms-rte-gallery .scms-gallery-block--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.scms-rte-gallery .scms-gallery-block--four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.scms-rte-gallery .scms-gallery-block--six {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.scms-rte-gallery .scms-gallery-block--portrait {
+    display: block;
+    max-width: 18rem;
+}
+.scms-rte-gallery .scms-gallery-block figure {
+    margin: 0;
+    min-width: 0;
+}
+.scms-rte-gallery .scms-gallery-block figure.is-open {
+    outline: 1px solid color-mix(in oklab, var(--gold, hsl(var(--primary, 38 55% 48%))) 70%, transparent);
+    outline-offset: 2px;
+    border-radius: 0.35rem;
+}
+.scms-rte-gallery-thumb {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.scms-rte-gallery-thumb img {
+    display: block;
+    width: 100%;
+    height: 7.5rem;
+    object-fit: cover;
+    border-radius: 0.3rem;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+}
+.scms-rte-gallery .scms-gallery-block--portrait .scms-rte-gallery-thumb img {
+    height: auto;
+    max-height: 14rem;
+    object-fit: contain;
+}
+.scms-rte-gallery-empty {
+    display: grid;
+    place-items: center;
+    height: 7.5rem;
+    border-radius: 0.3rem;
+    background: color-mix(in srgb, currentColor 6%, transparent);
+    color: inherit;
+    opacity: 0.65;
+    font-size: 0.75rem;
+}
+.scms-rte-gallery figcaption {
+    padding-top: 0.35rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+}
+.scms-rte-gallery-edit {
+    margin-top: 0.45rem;
+    padding: 0.45rem;
+    border-top: 1px solid var(--line, hsl(var(--border, 240 5% 84%)));
+}
+.scms-rte-gallery-empty-add {
+    grid-column: 1 / -1;
+    justify-self: start;
 }
 
 @media (max-width: 900px) {

@@ -36,6 +36,7 @@ export type BlogPostCard = {
     tags: string[];
     body?: string;
     status?: 'draft' | 'published';
+    hasUnpublishedChanges?: boolean;
     seo?: {
         title: string | null;
         description: string | null;
@@ -108,6 +109,7 @@ export type SiteCmsShared = {
         blogUpdate: string | null;
         blogPublish: string | null;
         blogUnpublish: string | null;
+        blogDiscard: string | null;
         blogDestroy: string | null;
     };
     upload: {

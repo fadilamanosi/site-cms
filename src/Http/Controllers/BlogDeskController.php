@@ -75,8 +75,10 @@ class BlogDeskController extends Controller
             return response()->json(['ok' => true, 'post' => $this->blog->detail($post)]);
         }
 
+        $message = $request->boolean('publish') ? 'Post published.' : 'Draft created.';
+
         return redirect()->to($this->blogEditPath($post->id))
-            ->with('success', 'Post created.');
+            ->with('success', $message);
     }
 
     public function update(UpsertPostRequest $request, int $id): RedirectResponse|JsonResponse
@@ -88,8 +90,10 @@ class BlogDeskController extends Controller
             return response()->json(['ok' => true, 'post' => $this->blog->detail($post)]);
         }
 
+        $message = ($request->boolean('publish')) ? 'Post published.' : 'Draft saved.';
+
         return redirect()->to($this->blogEditPath($post->id))
-            ->with('success', 'Post saved.');
+            ->with('success', $message);
     }
 
     public function publish(int $id): RedirectResponse|JsonResponse
@@ -114,6 +118,19 @@ class BlogDeskController extends Controller
         }
 
         return back()->with('success', 'Post unpublished.');
+    }
+
+    public function discard(int $id): RedirectResponse|JsonResponse
+    {
+        abort_unless($this->blog->enabled(), 404);
+        $post = $this->blog->discardDraft($id);
+
+        if (request()->expectsJson()) {
+            return response()->json(['ok' => true, 'post' => $this->blog->detail($post)]);
+        }
+
+        return redirect()->to($this->blogEditPath($post->id))
+            ->with('success', 'Draft discarded. Showing the published version.');
     }
 
     public function destroy(int $id): RedirectResponse|JsonResponse

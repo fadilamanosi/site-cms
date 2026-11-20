@@ -19,6 +19,18 @@ class SitePostRepository
         return SitePost::query()->where('slug', $slug)->first();
     }
 
+    public function findByPublicSlug(string $slug): ?SitePost
+    {
+        return SitePost::query()
+            ->where(function (Builder $query) use ($slug): void {
+                $query->where('published_slug', $slug)
+                    ->orWhere(function (Builder $inner) use ($slug): void {
+                        $inner->whereNull('published_slug')->where('slug', $slug);
+                    });
+            })
+            ->first();
+    }
+
     /**
      * @return Collection<int, SitePost>
      */
@@ -134,7 +146,13 @@ class SitePostRepository
 
         if ($tags !== null && $tags !== []) {
             foreach ($tags as $tag) {
-                $query->whereJsonContains('tags', $tag);
+                $query->where(function (Builder $inner) use ($tag): void {
+                    $inner->whereJsonContains('published_tags', $tag)
+                        ->orWhere(function (Builder $fallback) use ($tag): void {
+                            $fallback->whereNull('published_tags')
+                                ->whereJsonContains('tags', $tag);
+                        });
+                });
             }
         }
 

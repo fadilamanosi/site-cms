@@ -25,6 +25,7 @@ class UpsertPostRequest extends FormRequest
             'cover_src' => ['nullable', 'string', 'max:2048'],
             'cover_alt' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', 'in:draft,published'],
+            'publish' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:500'],

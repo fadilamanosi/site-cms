@@ -29,7 +29,7 @@ const form = useForm({
     body: props.post.body ?? '',
     cover_src: props.post.cover?.src ?? '',
     cover_alt: props.post.cover?.alt ?? '',
-    status: (props.post.status === 'published' ? 'published' : 'draft') as 'draft' | 'published',
+    publish: false,
     tags: (props.post.tags ?? []).join(', '),
     seo_title: props.post.seo?.title ?? '',
     seo_description: props.post.seo?.description ?? '',
@@ -47,7 +47,7 @@ watch(
         form.body = next.body ?? '';
         form.cover_src = next.cover?.src ?? '';
         form.cover_alt = next.cover?.alt ?? '';
-        form.status = next.status === 'published' ? 'published' : 'draft';
+        form.publish = false;
         form.tags = (next.tags ?? []).join(', ');
         form.seo_title = next.seo?.title ?? '';
         form.seo_description = next.seo?.description ?? '';
@@ -58,6 +58,18 @@ watch(
 );
 
 const heading = computed(() => (props.isNew ? 'Add new post' : 'Edit post'));
+const isLive = computed(() => props.post.status === 'published');
+const hasPending = computed(() => Boolean(props.post.hasUnpublishedChanges));
+const statusLabel = computed(() => {
+    if (!isLive.value) {
+        return 'Draft — not on the public site';
+    }
+    if (hasPending.value) {
+        return 'Published — unpublished edits pending';
+    }
+
+    return 'Published — public site matches this draft';
+});
 
 function withId(template: string | null, id: number | null | undefined): string | null {
     if (!template || !id) {
@@ -68,9 +80,7 @@ function withId(template: string | null, id: number | null | undefined): string 
 }
 
 function save(andPublish = false): void {
-    if (andPublish) {
-        form.status = 'published';
-    }
+    form.publish = andPublish;
 
     if (props.isNew) {
         const url = siteCms.value.routes.blogStore;
@@ -88,6 +98,17 @@ function save(andPublish = false): void {
     form.put(url, { preserveScroll: true });
 }
 
+function discardDraft(): void {
+    moreOpen.value = false;
+    if (!props.post.id || !window.confirm('Discard unpublished edits and restore the live published version?')) {
+        return;
+    }
+    const url = withId(siteCms.value.routes.blogDiscard, props.post.id);
+    if (url) {
+        router.post(url, {}, { preserveScroll: true });
+    }
+}
+
 function togglePublish(): void {
     moreOpen.value = false;
     if (!props.post.id) {
@@ -100,10 +121,7 @@ function togglePublish(): void {
         }
         return;
     }
-    const url = withId(siteCms.value.routes.blogPublish, props.post.id);
-    if (url) {
-        router.post(url, {}, { preserveScroll: true });
-    }
+    save(true);
 }
 
 function destroy(): void {
@@ -148,21 +166,21 @@ onMounted(() => {
                     :disabled="form.processing"
                     @click="save(false)"
                 >
-                    {{ form.processing ? 'Saving…' : 'Save' }}
+                    {{ form.processing && !form.publish ? 'Saving…' : 'Save draft' }}
                 </button>
                 <button
-                    v-if="isNew || post.status !== 'published'"
                     class="scms-btn"
                     type="button"
                     :disabled="form.processing"
                     @click="save(true)"
                 >
-                    Publish
+                    {{ form.processing && form.publish ? 'Publishing…' : isLive ? 'Publish changes' : 'Publish' }}
                 </button>
                 <button
-                    v-else
+                    v-if="isLive"
                     class="scms-btn"
                     type="button"
+                    :disabled="form.processing"
                     @click="togglePublish"
                 >
                     Unpublish
@@ -185,13 +203,22 @@ onMounted(() => {
                     </button>
                     <div v-if="moreOpen" class="scms-more-menu" role="menu">
                         <button
-                            v-if="!isNew && post.href"
+                            v-if="!isNew && post.href && isLive"
                             class="scms-more-item"
                             type="button"
                             role="menuitem"
                             @click="viewPublic"
                         >
-                            View post
+                            View live post
+                        </button>
+                        <button
+                            v-if="!isNew && isLive && hasPending"
+                            class="scms-more-item"
+                            type="button"
+                            role="menuitem"
+                            @click="discardDraft"
+                        >
+                            Discard draft edits
                         </button>
                         <button
                             class="scms-more-item"
@@ -237,6 +264,18 @@ onMounted(() => {
 
             <aside class="scms-blog-meta">
                 <section class="scms-blog-card">
+                    <h2>Status</h2>
+                    <p class="scms-muted" style="margin: 0; font-size: 0.85rem">{{ statusLabel }}</p>
+                    <p class="scms-muted" style="margin: 0.45rem 0 0; font-size: 0.8rem">
+                        Save draft updates only the editor copy. Publish pushes it to the public site.
+                    </p>
+                    <label class="scms-field" style="margin-top: 0.75rem">
+                        <span>Publish date</span>
+                        <input v-model="form.published_at" type="datetime-local" />
+                    </label>
+                </section>
+
+                <section class="scms-blog-card">
                     <h2>Label</h2>
                     <label class="scms-field">
                         <span class="scms-sr">Label</span>
@@ -251,27 +290,15 @@ onMounted(() => {
                 </section>
 
                 <section class="scms-blog-card">
-                    <h2>Publish</h2>
-                    <label class="scms-field">
-                        <span>Status</span>
-                        <select v-model="form.status">
-                            <option value="draft">Draft</option>
-                            <option value="published">Published</option>
-                        </select>
-                    </label>
-                    <label class="scms-field">
-                        <span>Publish date</span>
-                        <input v-model="form.published_at" type="datetime-local" />
-                    </label>
-                </section>
-
-                <section class="scms-blog-card">
                     <h2>Permalink</h2>
                     <label class="scms-field">
                         <span>Slug</span>
                         <input v-model="form.slug" type="text" placeholder="auto from title" />
                     </label>
                     <p v-if="form.errors.slug" class="scms-error">{{ form.errors.slug }}</p>
+                    <p v-if="isLive" class="scms-muted" style="margin: 0.35rem 0 0; font-size: 0.8rem">
+                        Slug changes go live only when you publish.
+                    </p>
                 </section>
 
                 <section class="scms-blog-card">

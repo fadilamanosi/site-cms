@@ -13,6 +13,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useSiteCmsUpload } from '../composables/useSiteCmsUpload';
+import { ImageGallery, type GalleryLayout } from '../extensions/imageGallery';
 import { ResizableImage } from '../extensions/resizableImage';
 import { mediaUi } from '../mediaUi';
 
@@ -57,6 +58,7 @@ const editor = useEditor({
                 class: 'scms-rte-image',
             },
         }),
+        ImageGallery,
         TextAlign.configure({
             types: ['heading', 'paragraph'],
         }),
@@ -245,6 +247,30 @@ function insertTable(): void {
     editor.value?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
     toolbarTick.value += 1;
 }
+
+function insertGallery(layout: GalleryLayout = 'grid'): void {
+    mediaUi.show(
+        '',
+        (url, name) => {
+            editor.value
+                ?.chain()
+                .focus()
+                .insertImageGallery(
+                    [
+                        {
+                            src: url,
+                            alt: name ? name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ') : '',
+                            caption: '',
+                        },
+                    ],
+                    layout,
+                )
+                .run();
+            toolbarTick.value += 1;
+        },
+        'image',
+    );
+}
 </script>
 
 <template>
@@ -318,6 +344,7 @@ function insertTable(): void {
                     </div>
                 </div>
                 <button class="scms-btn scms-btn-primary" type="button" title="Insert image from media library" @click="insertImage">Image</button>
+                <button class="scms-btn scms-btn-primary" type="button" title="Insert photo gallery" :class="{ 'is-on': isActive('imageGallery') }" @click="insertGallery()">Gallery</button>
                 <button class="scms-btn" type="button" title="Insert table" :class="{ 'is-on': isActive('table') }" @click="insertTable">Table</button>
                 <button
                     v-if="isActive('table')"

@@ -71,6 +71,7 @@ Route::middleware('web')->group(function () use ($desk, $login, $path): void {
             Route::put('/blog/{id}', [BlogDeskController::class, 'update'])->name('site-cms.blog.update')->whereNumber('id');
             Route::post('/blog/{id}/publish', [BlogDeskController::class, 'publish'])->name('site-cms.blog.publish')->whereNumber('id');
             Route::post('/blog/{id}/unpublish', [BlogDeskController::class, 'unpublish'])->name('site-cms.blog.unpublish')->whereNumber('id');
+            Route::post('/blog/{id}/discard', [BlogDeskController::class, 'discard'])->name('site-cms.blog.discard')->whereNumber('id');
             Route::delete('/blog/{id}', [BlogDeskController::class, 'destroy'])->name('site-cms.blog.destroy')->whereNumber('id');
         }
     });

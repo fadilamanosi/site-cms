@@ -202,9 +202,15 @@ onMounted(() => {
                         <td>
                             <span
                                 class="scms-blog-status"
-                                :class="post.status === 'published' ? 'is-live' : 'is-draft'"
+                                :class="post.status === 'published' ? (post.hasUnpublishedChanges ? 'is-pending' : 'is-live') : 'is-draft'"
                             >
-                                {{ post.status === 'published' ? 'Published' : 'Draft' }}
+                                {{
+                                    post.status !== 'published'
+                                        ? 'Draft'
+                                        : post.hasUnpublishedChanges
+                                            ? 'Edits pending'
+                                            : 'Published'
+                                }}
                             </span>
                         </td>
                         <td>{{ formatDate(post.updatedAt ?? post.publishedAt) }}</td>

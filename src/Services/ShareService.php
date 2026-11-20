@@ -80,6 +80,7 @@ class ShareService
                 'blogUpdate' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}') : null,
                 'blogPublish' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/publish') : null,
                 'blogUnpublish' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/unpublish') : null,
+                'blogDiscard' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}/discard') : null,
                 'blogDestroy' => $blogEnabled ? $this->href($cmsPath.'/blog/{id}') : null,
             ],
             'draft' => $this->contentService->draftState($pageKey === '' ? 'home' : $pageKey),
